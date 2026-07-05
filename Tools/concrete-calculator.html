@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Calculateur Béton Complet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f6f2;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2a5d34;
+        }
+
+        label {
+            margin-top: 15px;
+            display: block;
+            font-weight: bold;
+            color: #2a5d34;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input[readonly] {
+            background-color: #e9e9e9;
+        }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            background-color: #3a7d44;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2a5d34;
+        }
+
+        .result,
+        .alert {
+            margin-top: 25px;
+            background: #d7ebd9;
+            padding: 15px;
+            border-radius: 8px;
+            color: #2a5d34;
+            box-shadow: inset 0 0 10px #a0c68a;
+        }
+
+        .alert {
+            background-color: #ffeaea;
+            color: #a02222;
+            box-shadow: none;
+            font-weight: bold;
+        }
+
+        #customLink {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #customLink a {
+            display: inline-block;
+            padding: 10px 18px;
+            background-color: #3a7d44;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        #customLink a:hover {
+            background-color: #2a5d34;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Calculateur Béton</h1>
+        <form id="formCalcul">
+            <label for="projet">Type de projet :</label>
+            <select id="projet" required>
+                <option value="" disabled selected>-- Choisir --</option>
+                <option value="fondation" data-epaisseur="30">Fondation</option>
+                <option value="terrasse_pieton" data-epaisseur="10">Terrasse piétonne (sans charges)</option>
+                <option value="terrasse_vehicule" data-epaisseur="15">Terrasse véhiculée ou chargés</option>
+                <option value="abri_jardin" data-epaisseur="10">Abri de jardin</option>
+            </select>
+
+            <label for="longueur">Longueur (m) :</label>
+            <input type="number" id="longueur" min="0" step="0.01" required>
+
+            <label for="largeur">Largeur (m) :</label>
+            <input type="number" id="largeur" min="0" step="0.01" required>
+
+            <label for="surface_auto">Surface (m²) calculée :</label>
+            <input type="number" id="surface_auto" readonly>
+
+            <label for="epaisseur_cm">Épaisseur (cm) :</label>
+            <input type="number" id="epaisseur_cm" min="0" step="0.1" required>
+
+            <label for="dosage">Dosage ciment (kg/m³)</label>
+            <select id="dosage" required>
+                <option value="" disabled selected>-- Choisir le dosage --</option>
+                <option value="300">300 kg/m³ – C20/25</option>
+                <option value="350">350 kg/m³ – C25/30</option>
+                <option value="400">400 kg/m³ – C30/37</option>
+                <option value="450">450 kg/m³ – C35/45</option>
+                <option value="500">500 kg/m³ – C40/50</option>
+            </select>
+
+
+            <label for="densite">Type de matériau :</label>
+            <select id="densite" required>
+                <option value="" disabled selected>-- Choisir --</option>
+                <option value="compacte">Mélange compacté en sacs</option>
+                <option value="vrac">Mélange en vrac</option>
+                <option value="pret">Béton prêt à l'emploi (sac)</option>
+            </select>
+
+            <div id="prixInputs" style="margin-top: 15px;">
+                <label for="prixCiment">💰 Prix sac ciment (35 kg) :</label>
+                <input type="number" id="prixCiment" min="0" step="0.01" placeholder="Ex: 4.00">
+
+                <label for="prixMelange">💰 Prix sac mélange (35 kg) :</label>
+                <input type="number" id="prixMelange" min="0" step="0.01" placeholder="Ex: 6.50">
+
+                <label for="prixVrac">💰 Prix mélange vrac (€/kg) :</label>
+                <input type="number" id="prixVrac" min="0" step="0.001" placeholder="Ex: 0.15">
+
+                <label for="prixPret">💰 Prix béton prêt à l'emploi (sac) :</label>
+                <input type="number" id="prixPret" min="0" step="0.01" placeholder="Ex: 7.00">
+            </div>
+
+            <button type="submit">Calculer</button>
+        </form>
+
+        <div class="alert" id="alertEpaisseur" style="display:none;"></div>
+        <div class="result" id="result" style="display:none;"></div>
+
+        <div id="customLink">
+            <a href="https://codepen.io/FoxyWork/full/ogjjYpK" target="_blank" rel="noopener noreferrer">
+                👉 Petite Check-list pense-bête
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const projetSelect = document.getElementById('projet');
+        const epaisseurInput = document.getElementById('epaisseur_cm');
+        const longueurInput = document.getElementById('longueur');
+        const largeurInput = document.getElementById('largeur');
+        const surfaceInput = document.getElementById('surface_auto');
+        const resultDiv = document.getElementById('result');
+        const alertDiv = document.getElementById('alertEpaisseur');
+        const form = document.getElementById('formCalcul');
+
+        projetSelect.addEventListener('change', () => {
+            const ep = projetSelect.selectedOptions[0].dataset.epaisseur;
+            if (ep) {
+                epaisseurInput.value = ep;
+                alertDiv.style.display = 'none';
+                resultDiv.style.display = 'none';
+                surfaceInput.value = '';
+                longueurInput.value = '';
+                largeurInput.value = '';
+            }
+        });
+
+        function calculSurface() {
+            const L = parseFloat(longueurInput.value);
+            const l = parseFloat(largeurInput.value);
+            if (!isNaN(L) && !isNaN(l)) {
+                const surface = L * l;
+                surfaceInput.value = surface.toFixed(2);
+                return surface;
+            }
+            surfaceInput.value = '';
+            return null;
+        }
+
+        longueurInput.addEventListener('input', calculSurface);
+        largeurInput.addEventListener('input', calculSurface);
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            alertDiv.style.display = 'none';
+            resultDiv.style.display = 'none';
+
+            const longueur = parseFloat(longueurInput.value) || 0;
+            const largeur = parseFloat(largeurInput.value) || 0;
+            const epaisseurCm = parseFloat(epaisseurInput.value) || 0;
+            const dosage = parseFloat(document.getElementById('dosage').value) || 0;
+            const densite = document.getElementById('densite').value;
+
+            const prixCiment = parseFloat(document.getElementById('prixCiment').value) || 0;
+            const prixMelange = parseFloat(document.getElementById('prixMelange').value) || 0;
+            const prixVrac = parseFloat(document.getElementById('prixVrac').value) || 0;
+            const prixPret = parseFloat(document.getElementById('prixPret').value) || 0;
+
+            if (longueur <= 0 || largeur <= 0 || epaisseurCm <= 0 || dosage <= 0 || !densite) {
+                alertDiv.style.display = 'block';
+                alertDiv.textContent = '⚠️ Veuillez remplir correctement tous les champs.';
+                return;
+            }
+
+            // Volume béton en m3
+            const volume = longueur * largeur * (epaisseurCm / 100);
+
+            // Recommandations épaisseur
+            const recommandation = parseFloat(projetSelect.selectedOptions[0].dataset.epaisseur) || 0;
+            if (epaisseurCm < recommandation) {
+                alertDiv.style.display = 'block';
+                alertDiv.textContent = `⚠️ Attention : épaisseur recommandée pour ce projet est ${recommandation} cm. Vous avez saisi ${epaisseurCm} cm, ce qui peut être insuffisant.`;
+            }
+
+            // Eau standard 180 L/m3
+            const eauParM3 = 180;
+
+            // Masse ciment (kg)
+            const masseCiment = dosage * volume;
+
+            // Nombre sacs ciment 35kg
+            const sacsCiment = masseCiment / 35;
+
+            let masseMelangeKg = 0;
+            let sacsMelange = 0;
+            let sacsPret = 0;
+            let eauTotale = eauParM3 * volume;
+            let prixTotal = 0;
+
+            if (densite === 'compacte') {
+                // Mélange compacté = 5x masse ciment
+                masseMelangeKg = masseCiment * 5;
+                sacsMelange = masseMelangeKg / 35;
+                prixTotal = sacsCiment * prixCiment + sacsMelange * prixMelange;
+            } else if (densite === 'vrac') {
+                // Mélange en vrac = 5x masse ciment (kg), pas de sacs pour mélange ici
+                masseMelangeKg = masseCiment * 5;
+                prixTotal = sacsCiment * prixCiment + masseMelangeKg * prixVrac;
+            } else if (densite === 'pret') {
+                // Béton prêt : densité approx 2100 kg/m3
+                const densiteBetonPret = 2100;
+                const masseBeton = volume * densiteBetonPret;
+                sacsPret = masseBeton / 35;
+                prixTotal = sacsPret * prixPret;
+            }
+
+            let htmlResult = `<strong>Volume béton :</strong> ${volume.toFixed(3)} m³<br/>`;
+
+            if (densite === 'compacte') {
+                htmlResult += `<strong>Ciment nécessaire :</strong> ${masseCiment.toFixed(1)} kg (~${sacsCiment.toFixed(1)} sacs de 35kg)<br/>`;
+                htmlResult += `<strong>Mélange compacté :</strong> ${masseMelangeKg.toFixed(1)} kg (~${sacsMelange.toFixed(1)} sacs de 35kg)<br/>`;
+                htmlResult += `<strong>Eau nécessaire :</strong> ${eauTotale.toFixed(1)} litres<br/>`;
+                if (prixTotal > 0) {
+                    htmlResult += `<strong>Prix total estimé :</strong> ${prixTotal.toFixed(2)} €<br/>`;
+                }
+            } else if (densite === 'vrac') {
+                // Détail sable et gravier 1/3 et 2/3
+                const masseSable = masseMelangeKg / 3;
+                const masseGravier = masseMelangeKg * 2 / 3;
+
+                htmlResult += `<strong>Ciment nécessaire :</strong> ${masseCiment.toFixed(1)} kg<br/>`;
+                htmlResult += `<strong>Mélange total en vrac :</strong> ${masseMelangeKg.toFixed(1)} kg<br/>`;
+                htmlResult += `&nbsp;&nbsp;- Sable : ${masseSable.toFixed(1)} kg<br/>`;
+                htmlResult += `&nbsp;&nbsp;- Gravier : ${masseGravier.toFixed(1)} kg<br/>`;
+                htmlResult += `<strong>Eau nécessaire :</strong> ${eauTotale.toFixed(1)} litres<br/>`;
+                if (prixTotal > 0) {
+                    htmlResult += `<strong>Prix total estimé :</strong> ${prixTotal.toFixed(2)} €<br/>`;
+                }
+            } else if (densite === 'pret') {
+                htmlResult += `<strong>Sacs béton prêt nécessaires :</strong> ${sacsPret.toFixed(1)} sacs de 35kg<br/>`;
+                htmlResult += `<strong>Eau nécessaire :</strong> ${eauTotale.toFixed(1)} litres (ajuster selon fabricant)<br/>`;
+                if (prixTotal > 0) {
+                    htmlResult += `<strong>Prix total estimé :</strong> ${prixTotal.toFixed(2)} €<br/>`;
+                }
+            }
+
+            resultDiv.innerHTML = htmlResult;
+            resultDiv.style.display = 'block';
+        });
+    </script>
+</body>
+
+</html>
