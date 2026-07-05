@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -73,7 +74,8 @@
             transition: all 0.3s ease;
         }
 
-        .filter-btn:hover, .filter-btn.active {
+        .filter-btn:hover,
+        .filter-btn.active {
             background: var(--accent);
             border-color: var(--accent);
             box-shadow: 0 4px 12px rgba(241, 163, 99, 0.3);
@@ -93,15 +95,23 @@
             border-radius: 16px;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             display: flex;
             flex-direction: column;
+            text-decoration: none;
+            /* Crucial : enlève le soulignement du texte */
+            color: inherit;
+            /* Crucial : garde la couleur des textes définie dans le body */
+            cursor: pointer;
         }
 
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-hover);
+            /* La bordure s'illumine avec ta couleur accentuée */
+            background: rgba(255, 255, 255, 0.08);
+            /* Un poil plus brillant */
         }
 
         .card-image {
@@ -170,6 +180,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -186,7 +197,7 @@
         </div>
 
         <main class="grid">
-            
+
             <div class="card" data-category="dev">
                 <div class="card-image">404 (Image)</div>
                 <div class="card-content">
@@ -197,15 +208,14 @@
                 </div>
             </div>
 
-            <div class="card" data-category="health">
+            <a href="Health/recipes-aio.html" class="card" data-category="health">
                 <img src="Pics/recipes-aio.png" class="card-image">
                 <div class="card-content">
                     <span class="card-tag">Health</span>
                     <h3 class="card-title">Recettes AIO</h3>
                     <p class="card-desc">Tout un tas de recettes Healthy facile et rapide</p>
-                    <a href="Health/recipes-aio.html" class="card-link">Voir</a>
                 </div>
-            </div>
+            </a>
 
             <div class="card" data-category="tools">
                 <div class="card-image">404 (Image)</div>
@@ -275,4 +285,5 @@
         });
     </script>
 </body>
+
 </html>
