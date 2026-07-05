@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Station de Chiffrement — Codec Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1826;
+    --ink-2:#132234;
+    --ink-3:#1b2d43;
+    --paper:#ece4d3;
+    --paper-dim:#a9a091;
+    --brass:#c8a35c;
+    --brass-dim:#8a7140;
+    --signal:#7fb69e;
+    --rust:#a8503a;
+    --line:#2a3c54;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  ::selection{background:var(--brass);color:var(--ink);}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(200,163,92,0.08), transparent 45%),
+      var(--ink);
+    color:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--brass);}
+
+  /* ---------- Letterhead ---------- */
+  header.deck-head{
+    max-width:920px;
+    margin:0 auto;
+    padding:44px 24px 20px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--brass);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, var(--brass-dim), transparent);
+  }
+  h1{
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size:clamp(28px, 5vw, 42px);
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  .tagline{
+    color:var(--paper-dim);
+    font-size:14.5px;
+    max-width:56ch;
+    margin:0 0 18px;
+  }
+  .morse-strip{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    letter-spacing:.14em;
+    color:var(--brass-dim);
+    display:flex;
+    gap:2px;
+    flex-wrap:wrap;
+    user-select:none;
+  }
+  .morse-strip span{opacity:0; animation:pulse-in .5s ease forwards;}
+  @media (prefers-reduced-motion: reduce){ .morse-strip span{animation:none; opacity:1;} }
+  @keyframes pulse-in{ to{opacity:1;} }
+
+  /* ---------- Layout ---------- */
+  main{max-width:920px; margin:0 auto; padding:0 24px 80px;}
+
+  nav.tabs{
+    display:flex;
+    gap:6px;
+    margin:18px 0 22px;
+    border-bottom:1px solid var(--line);
+  }
+  nav.tabs button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    background:none;
+    border:none;
+    color:var(--paper-dim);
+    padding:11px 4px;
+    margin-right:22px;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+  }
+  nav.tabs button::before{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-1px;
+    height:2px;
+    background:transparent;
+  }
+  nav.tabs button.active{color:var(--paper);}
+  nav.tabs button.active::before{background:var(--brass);}
+  nav.tabs button:hover{color:var(--paper);}
+
+  section.panel{display:none;}
+  section.panel.active{display:block; animation:fade-up .35s ease;}
+  @keyframes fade-up{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){ section.panel.active{animation:none;} }
+
+  .card{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    margin-bottom:16px;
+  }
+
+  .row{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:16px;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--brass);
+  }
+  select, input[type=number]{
+    background:var(--ink-3);
+    border:1px solid var(--line);
+    color:var(--paper);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13.5px;
+    padding:9px 10px;
+    border-radius:var(--radius);
+  }
+  select:focus, input:focus, textarea:focus, button:focus-visible{
+    outline:2px solid var(--brass);
+    outline-offset:1px;
+  }
+
+  .mode-toggle{
+    display:inline-flex;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .mode-toggle button{
+    background:var(--ink-3);
+    color:var(--paper-dim);
+    border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:9px 16px;
+    cursor:pointer;
+  }
+  .mode-toggle button.active{background:var(--brass); color:var(--ink); font-weight:700;}
+
+  textarea{
+    width:100%;
+    min-height:130px;
+    background:var(--ink-3);
+    border:1px solid var(--line);
+    color:var(--paper);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13.5px;
+    padding:14px;
+    border-radius:var(--radius);
+    resize:vertical;
+  }
+  textarea[readonly]{color:var(--signal); background:#111f30;}
+
+  .field-label-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .char-count{font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--paper-dim);}
+
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+  button.btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:11px 18px;
+    border-radius:var(--radius);
+    border:1px solid var(--brass-dim);
+    background:transparent;
+    color:var(--brass);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  button.btn:hover{background:var(--brass); color:var(--ink);}
+  button.btn.primary{background:var(--brass); color:var(--ink); font-weight:700;}
+  button.btn.primary:hover{background:#ddb872;}
+  button.btn.ghost{border-color:var(--line); color:var(--paper-dim);}
+  button.btn.ghost:hover{background:var(--ink-3); color:var(--paper);}
+
+  .hint{font-size:12.5px; color:var(--paper-dim); margin-top:10px;}
+  .status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    margin-top:10px;
+    min-height:16px;
+    color:var(--signal);
+  }
+  .status.error{color:var(--rust);}
+
+  /* file drop zones */
+  .dropzone{
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+    text-align:center;
+    color:var(--paper-dim);
+    font-size:13px;
+    cursor:pointer;
+    background:var(--ink-3);
+  }
+  .dropzone.drag{border-color:var(--brass); color:var(--brass);}
+  .dropzone input{display:none;}
+
+  .preview{
+    margin-top:16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+  }
+  .preview img{max-width:100%; max-height:340px; border:1px solid var(--line); border-radius:var(--radius);}
+  .preview audio{width:100%;}
+
+  footer{
+    max-width:920px; margin:0 auto; padding:20px 24px 60px;
+    color:var(--paper-dim); font-size:12px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width:560px){
+    nav.tabs button{margin-right:14px; font-size:11.5px;}
+    .card{padding:16px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="deck-head">
+  <div class="eyebrow">Codec Deck — Outil Local</div>
+  <h1>Station de Chiffrement</h1>
+  <p class="tagline">Encodez et décodez du texte, des images et de l'audio en Morse, Binaire, Hexadécimal, Base64, ROT13/César, Emoji et URL — tout se passe dans votre navigateur, rien n'est envoyé nulle part.</p>
+  <div class="morse-strip" id="morseStrip" aria-hidden="true"></div>
+</header>
+
+<main>
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="texte" role="tab" aria-selected="true">Texte</button>
+    <button class="tab-btn" data-tab="image" role="tab" aria-selected="false">Image</button>
+    <button class="tab-btn" data-tab="audio" role="tab" aria-selected="false">Audio</button>
+  </nav>
+
+  <!-- ===================== TEXTE ===================== -->
+  <section class="panel active" id="panel-texte">
+    <div class="card">
+      <div class="row">
+        <div class="field">
+          <label for="methodSelect">Méthode</label>
+          <select id="methodSelect">
+            <option value="morse">Morse</option>
+            <option value="binaire">Binaire</option>
+            <option value="hex">Hexadécimal</option>
+            <option value="base64">Base64</option>
+            <option value="rot13">ROT13</option>
+            <option value="cesar">César (décalage)</option>
+            <option value="emoji">Emoji</option>
+            <option value="url">URL (%encodage)</option>
+          </select>
+        </div>
+        <div class="field" id="shiftField" style="display:none;">
+          <label for="shiftInput">Décalage</label>
+          <input type="number" id="shiftInput" min="1" max="25" value="3" style="width:80px;">
+        </div>
+        <div class="field">
+          <label>Sens</label>
+          <div class="mode-toggle" id="textModeToggle">
+            <button type="button" class="active" data-mode="encode">Encoder</button>
+            <button type="button" data-mode="decode">Décoder</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-label-row">
+        <label for="textInput">Entrée</label>
+        <span class="char-count" id="inCount">0 caractères</span>
+      </div>
+      <textarea id="textInput" placeholder="Écrivez ou collez votre texte ici…"></textarea>
+
+      <div class="actions">
+        <button class="btn primary" id="convertBtn">Convertir →</button>
+        <button class="btn ghost" id="swapBtn">⇄ Inverser sens et sortie</button>
+        <button class="btn ghost" id="clearTextBtn">Effacer</button>
+      </div>
+
+      <div class="field-label-row" style="margin-top:18px;">
+        <label for="textOutput">Sortie</label>
+        <button class="btn ghost" id="copyTextBtn" style="padding:4px 10px; font-size:11px;">Copier</button>
+      </div>
+      <textarea id="textOutput" readonly placeholder="Le résultat apparaît ici…"></textarea>
+      <div class="status" id="textStatus"></div>
+      <p class="hint">L'emoji et le César modifient la casse ou nécessitent un décalage identique pour décoder. ROT13 est son propre inverse.</p>
+    </div>
+  </section>
+
+  <!-- ===================== IMAGE ===================== -->
+  <section class="panel" id="panel-image">
+    <div class="mode-toggle" id="imageSubModeToggle" style="margin-bottom:16px;">
+      <button type="button" class="active" data-submode="byte">Fichier ↔ Texte (octets bruts)</button>
+      <button type="button" data-submode="signal">Morse visuel (points/tirets réels)</button>
+    </div>
+
+    <div class="card" id="imageByteCard">
+      <div class="row">
+        <div class="field">
+          <label for="imageMethodSelect">Méthode</label>
+          <select id="imageMethodSelect">
+            <option value="base64">Base64</option>
+            <option value="hex">Hexadécimal</option>
+            <option value="binaire">Binaire</option>
+            <option value="morse">Morse</option>
+            <option value="rot13">ROT13</option>
+            <option value="cesar">César (décalage)</option>
+            <option value="emoji">Emoji</option>
+            <option value="url">URL (%encodage)</option>
+          </select>
+        </div>
+        <div class="field" id="imageShiftField" style="display:none;">
+          <label for="imageShiftInput">Décalage</label>
+          <input type="number" id="imageShiftInput" min="1" max="25" value="3" style="width:80px;">
+        </div>
+        <div class="field">
+          <label>Sens</label>
+          <div class="mode-toggle" id="imageModeToggle">
+            <button type="button" class="active" data-mode="encode">Fichier → Texte</button>
+            <button type="button" data-mode="decode">Texte → Fichier</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="imageEncodeBlock">
+        <div class="dropzone" id="imageDrop">
+          <p>Déposez une image ici, ou cliquez pour en choisir une.</p>
+          <input type="file" id="imageFileInput" accept="image/*">
+        </div>
+        <div class="preview" id="imageEncodePreview"></div>
+        <div class="field-label-row" style="margin-top:16px;">
+          <label for="imageOutput">Texte encodé</label>
+          <button class="btn ghost" id="copyImageBtn" style="padding:4px 10px; font-size:11px;">Copier</button>
+        </div>
+        <textarea id="imageOutput" readonly placeholder="Le texte encodé apparaît ici…"></textarea>
+      </div>
+
+      <div id="imageDecodeBlock" style="display:none;">
+        <label for="imageInputB64">Collez le texte encodé (ou une Data URL complète si méthode = Base64)</label>
+        <textarea id="imageInputB64" placeholder="Collez ici le texte produit par le mode « Fichier → Texte »…"></textarea>
+        <div class="field" style="margin-top:10px; max-width:220px;" id="imageMimeField">
+          <label for="imageMimeSelect">Type de fichier</label>
+          <select id="imageMimeSelect">
+            <option value="image/png">PNG</option>
+            <option value="image/jpeg">JPEG</option>
+            <option value="image/webp">WEBP</option>
+            <option value="image/gif">GIF</option>
+            <option value="image/svg+xml">SVG</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="decodeImageBtn">Afficher l'image →</button>
+        </div>
+        <div class="preview" id="imageDecodePreview"></div>
+      </div>
+      <div class="status" id="imageStatus"></div>
+      <p class="hint">Astuce : pour du Morse ou de l'Emoji sur un fichier, la conversion passe par une représentation hexadécimale interne — décodez toujours avec la même méthode que celle utilisée à l'encodage.</p>
+    </div>
+
+    <div class="card" id="imageSignalCard" style="display:none;">
+      <div class="mode-toggle" id="imageSignalModeToggle" style="margin-bottom:16px;">
+        <button type="button" class="active" data-mode="encode">Texte → Image</button>
+        <button type="button" data-mode="decode">Image → Texte</button>
+      </div>
+
+      <div id="imageSignalEncodeBlock">
+        <label for="imageSignalInput">Texte à convertir en Morse visuel</label>
+        <textarea id="imageSignalInput" placeholder="Écrivez votre message…"></textarea>
+        <div class="actions">
+          <button class="btn primary" id="generateImageSignalBtn">Générer l'image →</button>
+        </div>
+        <div class="preview" id="imageSignalEncodePreview"></div>
+      </div>
+
+      <div id="imageSignalDecodeBlock" style="display:none;">
+        <div class="dropzone" id="imageSignalDrop">
+          <p>Déposez une image de Morse visuel (générée par cet outil) ici, ou cliquez pour en choisir une.</p>
+          <input type="file" id="imageSignalFileInput" accept="image/*">
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="decodeImageSignalBtn">Décoder l'image →</button>
+        </div>
+        <div class="field-label-row" style="margin-top:16px;">
+          <label for="imageSignalOutput">Texte décodé</label>
+          <button class="btn ghost" id="copyImageSignalBtn" style="padding:4px 10px; font-size:11px;">Copier</button>
+        </div>
+        <textarea id="imageSignalOutput" readonly placeholder="Le texte décodé apparaît ici…"></textarea>
+      </div>
+      <div class="status" id="imageSignalStatus"></div>
+      <p class="hint">Chaque point/tiret est dessiné à l'échelle réelle (points ronds, tirets rectangulaires) sur fond blanc. Le décodage relit ces formes comme un vrai signal Morse — fonctionne mieux sur une image non recompressée.</p>
+    </div>
+  </section>
+
+  <!-- ===================== AUDIO ===================== -->
+  <section class="panel" id="panel-audio">
+    <div class="mode-toggle" id="audioSubModeToggle" style="margin-bottom:16px;">
+      <button type="button" class="active" data-submode="byte">Fichier ↔ Texte (octets bruts)</button>
+      <button type="button" data-submode="signal">Signal réel (bips → texte)</button>
+    </div>
+
+    <div class="card" id="audioByteCard">
+      <div class="row">
+        <div class="field">
+          <label for="audioMethodSelect">Méthode</label>
+          <select id="audioMethodSelect">
+            <option value="base64">Base64</option>
+            <option value="hex">Hexadécimal</option>
+            <option value="binaire">Binaire</option>
+            <option value="morse">Morse</option>
+            <option value="rot13">ROT13</option>
+            <option value="cesar">César (décalage)</option>
+            <option value="emoji">Emoji</option>
+            <option value="url">URL (%encodage)</option>
+          </select>
+        </div>
+        <div class="field" id="audioShiftField" style="display:none;">
+          <label for="audioShiftInput">Décalage</label>
+          <input type="number" id="audioShiftInput" min="1" max="25" value="3" style="width:80px;">
+        </div>
+        <div class="field">
+          <label>Sens</label>
+          <div class="mode-toggle" id="audioModeToggle">
+            <button type="button" class="active" data-mode="encode">Fichier → Texte</button>
+            <button type="button" data-mode="decode">Texte → Fichier</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="audioEncodeBlock">
+        <div class="dropzone" id="audioDrop">
+          <p>Déposez un fichier audio ici, ou cliquez pour en choisir un.</p>
+          <input type="file" id="audioFileInput" accept="audio/*">
+        </div>
+        <div class="preview" id="audioEncodePreview"></div>
+        <div class="field-label-row" style="margin-top:16px;">
+          <label for="audioOutput">Texte encodé</label>
+          <button class="btn ghost" id="copyAudioBtn" style="padding:4px 10px; font-size:11px;">Copier</button>
+        </div>
+        <textarea id="audioOutput" readonly placeholder="Le texte encodé apparaît ici…"></textarea>
+      </div>
+
+      <div id="audioDecodeBlock" style="display:none;">
+        <label for="audioInputB64">Collez le texte encodé (ou une Data URL complète si méthode = Base64)</label>
+        <textarea id="audioInputB64" placeholder="Collez ici le texte produit par le mode « Fichier → Texte »…"></textarea>
+        <div class="field" style="margin-top:10px; max-width:220px;" id="audioMimeField">
+          <label for="audioMimeSelect">Type de fichier</label>
+          <select id="audioMimeSelect">
+            <option value="audio/mpeg">MP3</option>
+            <option value="audio/wav">WAV</option>
+            <option value="audio/ogg">OGG</option>
+            <option value="audio/webm">WEBM</option>
+            <option value="audio/mp4">M4A</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="decodeAudioBtn">Charger l'audio →</button>
+        </div>
+        <div class="preview" id="audioDecodePreview"></div>
+      </div>
+      <div class="status" id="audioStatus"></div>
+      <p class="hint">Astuce : Morse/Binaire produisent un texte très long pour de gros fichiers audio — préférez Base64 ou Hex au-delà de quelques Mo.</p>
+    </div>
+
+    <div class="card" id="audioSignalCard" style="display:none;">
+      <div class="row">
+        <div class="field">
+          <label for="audioSignalMethodSelect">Méthode</label>
+          <select id="audioSignalMethodSelect">
+            <option value="morse">Morse (bips courts/longs classiques)</option>
+            <option value="binaire">Binaire (2 tonalités, 0/1)</option>
+            <option value="hex">Hexadécimal (modem 2 tonalités)</option>
+            <option value="base64">Base64 (modem 2 tonalités)</option>
+            <option value="rot13">ROT13 (modem 2 tonalités)</option>
+            <option value="cesar">César (modem 2 tonalités)</option>
+            <option value="emoji">Emoji (modem 2 tonalités)</option>
+            <option value="url">URL (modem 2 tonalités)</option>
+          </select>
+        </div>
+        <div class="field" id="audioSignalShiftField" style="display:none;">
+          <label for="audioSignalShiftInput">Décalage</label>
+          <input type="number" id="audioSignalShiftInput" min="1" max="25" value="3" style="width:80px;">
+        </div>
+        <div class="field">
+          <label>Sens</label>
+          <div class="mode-toggle" id="audioSignalModeToggle">
+            <button type="button" class="active" data-mode="encode">Texte → Audio</button>
+            <button type="button" data-mode="decode">Audio → Texte</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="audioSignalEncodeBlock">
+        <label for="audioSignalInput">Texte à transformer en signal sonore réel</label>
+        <textarea id="audioSignalInput" placeholder="Écrivez votre message…"></textarea>
+        <div class="actions">
+          <button class="btn primary" id="generateAudioSignalBtn">Générer l'audio →</button>
+        </div>
+        <div class="preview" id="audioSignalEncodePreview"></div>
+      </div>
+
+      <div id="audioSignalDecodeBlock" style="display:none;">
+        <div class="dropzone" id="audioSignalDrop">
+          <p>Déposez un fichier .wav / .mp3 contenant le signal (généré par cet outil), ou cliquez pour en choisir un.</p>
+          <input type="file" id="audioSignalFileInput" accept="audio/*">
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="decodeAudioSignalBtn">Décoder l'audio →</button>
+        </div>
+        <div class="field-label-row" style="margin-top:16px;">
+          <label for="audioSignalOutput">Texte décodé</label>
+          <button class="btn ghost" id="copyAudioSignalBtn" style="padding:4px 10px; font-size:11px;">Copier</button>
+        </div>
+        <textarea id="audioSignalOutput" readonly placeholder="Le texte décodé apparaît ici…"></textarea>
+      </div>
+      <div class="status" id="audioSignalStatus"></div>
+      <p class="hint">Le Morse utilise une tonalité unique (bips courts/longs, comme un vrai émetteur). Les autres méthodes utilisent un « modem » à deux tonalités (comme un vieux modem téléphonique) : décodez toujours avec la même méthode qu'à l'encodage. Fonctionne mieux avec le .wav généré ici — le MP3 (compressé) peut parfois abîmer le signal.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Station de Chiffrement — tout le traitement se fait localement dans votre navigateur (aucun envoi réseau). Ceci est un outil d'encodage/encodage classique à but pédagogique et de jeu, pas un système de sécurité cryptographique.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     Letterhead: decorative morse strip spelling "CODEX"
+  ========================================================== */
+  var MORSE_TABLE = {
+    'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....',
+    'I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.',
+    'Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-',
+    'Y':'-.--','Z':'--..',
+    '0':'-----','1':'.----','2':'..---','3':'...--','4':'....-',
+    '5':'.....','6':'-....','7':'--...','8':'---..','9':'----.',
+    '.':'.-.-.-', ',':'--..--', '?':'..--..', "'":'.----.', '!':'-.-.--',
+    '/':'-..-.', '(':'-.--.', ')':'-.--.-', '&':'.-...', ':':'---...',
+    ';':'-.-.-.', '=':'-...-', '+':'.-.-.', '-':'-....-', '_':'..--.-',
+    '"':'.-..-.', '$':'...-..-', '@':'.--.-.'
+  };
+  var MORSE_REVERSE = {};
+  Object.keys(MORSE_TABLE).forEach(function(k){ MORSE_REVERSE[MORSE_TABLE[k]] = k; });
+
+  (function buildStrip(){
+    var word = "CODEX DECK";
+    var strip = document.getElementById('morseStrip');
+    var parts = [];
+    word.split('').forEach(function(ch){
+      if (ch === ' ') { parts.push('/'); return; }
+      var code = MORSE_TABLE[ch];
+      if (code) parts.push(code);
+    });
+    var full = parts.join('  ');
+    var frag = document.createDocumentFragment();
+    full.split('').forEach(function(ch, i){
+      var span = document.createElement('span');
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.animationDelay = (i * 14) + 'ms';
+      frag.appendChild(span);
+    });
+    strip.appendChild(frag);
+  })();
+
+  /* =========================================================
+     Shared byte <-> base64 helpers (unicode-safe)
+  ========================================================== */
+  function textToBytes(str){ return new TextEncoder().encode(str); }
+  function bytesToText(bytes){ return new TextDecoder('utf-8', {fatal:false}).decode(bytes); }
+
+  function bytesToBase64(bytes){
+    var binary = '';
+    var chunk = 0x8000;
+    for (var i = 0; i < bytes.length; i += chunk){
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+  function base64ToBytes(b64){
+    var binary = atob(b64);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  }
+
+  /* =========================================================
+     Text codecs
+  ========================================================== */
+  function morseEncode(str){
+    return str.toUpperCase().split(' ').map(function(word){
+      return word.split('').map(function(ch){
+        return MORSE_TABLE[ch] || '';
+      }).filter(Boolean).join(' ');
+    }).join(' / ');
+  }
+  function morseDecode(str){
+    return str.trim().split(' / ').map(function(word){
+      return word.trim().split(/\s+/).map(function(code){
+        return MORSE_REVERSE[code] || '';
+      }).join('');
+    }).join(' ');
+  }
+
+  function binaireEncode(str){
+    var bytes = textToBytes(str);
+    var out = [];
+    bytes.forEach(function(b){ out.push(b.toString(2).padStart(8, '0')); });
+    return out.join(' ');
+  }
+  function binaireDecode(str){
+    var parts = str.trim().split(/\s+/).filter(Boolean);
+    var bytes = new Uint8Array(parts.length);
+    parts.forEach(function(p, i){ bytes[i] = parseInt(p, 2) & 0xFF; });
+    return bytesToText(bytes);
+  }
+
+  function hexEncode(str){
+    var bytes = textToBytes(str);
+    var out = [];
+    bytes.forEach(function(b){ out.push(b.toString(16).padStart(2, '0')); });
+    return out.join(' ');
+  }
+  function hexDecode(str){
+    var clean = str.replace(/[^0-9a-fA-F]/g, '');
+    if (clean.length % 2 !== 0) throw new Error("Longueur hexadécimale impaire.");
+    var bytes = new Uint8Array(clean.length / 2);
+    for (var i = 0; i < clean.length; i += 2){
+      bytes[i/2] = parseInt(clean.substr(i, 2), 16);
+    }
+    return bytesToText(bytes);
+  }
+
+  function base64Encode(str){ return bytesToBase64(textToBytes(str)); }
+  function base64Decode(str){ return bytesToText(base64ToBytes(str.trim())); }
+
+  function caesarShift(str, shift){
+    shift = ((shift % 26) + 26) % 26;
+    return str.replace(/[a-zA-Z]/g, function(ch){
+      var base = ch <= 'Z' ? 65 : 97;
+      return String.fromCharCode(((ch.charCodeAt(0) - base + shift) % 26) + base);
+    });
+  }
+  function rot13(str){ return caesarShift(str, 13); }
+
+  function urlEncode(str){ return encodeURIComponent(str); }
+  function urlDecode(str){ return decodeURIComponent(str); }
+
+  var EMOJI_MAP = {
+    a:'🍎', b:'🐝', c:'🍒', d:'🐬', e:'🦅', f:'🔥', g:'🍇', h:'🏠', i:'🍦', j:'🃏',
+    k:'🔑', l:'🦁', m:'🌙', n:'🎵', o:'🐙', p:'🍕', q:'👑', r:'🌈', s:'🌟', t:'🌴',
+    u:'☂', v:'🌋', w:'🐺', x:'❌', y:'🧶', z:'⚡'
+  };
+  var EMOJI_REVERSE = {};
+  Object.keys(EMOJI_MAP).forEach(function(k){ EMOJI_REVERSE[EMOJI_MAP[k]] = k; });
+
+  function emojiEncode(str){
+    return str.toLowerCase().split('').map(function(ch){
+      return EMOJI_MAP[ch] || ch;
+    }).join('');
+  }
+  function emojiDecode(str){
+    var graphemes = Array.from(str);
+    return graphemes.map(function(g){
+      return EMOJI_REVERSE[g] || g;
+    }).join('');
+  }
+
+  var METHODS = {
+    morse:   { encode: morseEncode,   decode: morseDecode },
+    binaire: { encode: binaireEncode, decode: binaireDecode },
+    hex:     { encode: hexEncode,     decode: hexDecode },
+    base64:  { encode: base64Encode,  decode: base64Decode },
+    rot13:   { encode: rot13,         decode: rot13 },
+    cesar:   {
+      encode: function(str, shift){ return caesarShift(str, shift); },
+      decode: function(str, shift){ return caesarShift(str, -shift); }
+    },
+    emoji:   { encode: emojiEncode, decode: emojiDecode },
+    url:     { encode: urlEncode, decode: urlDecode }
+  };
+
+  /* =========================================================
+     Byte-level codecs, for files (image/audio)
+     Direct representations: base64, hex, binaire (act on raw bytes).
+     Layered ciphers (morse, rot13, cesar, emoji, url) act on a text
+     representation of the bytes (hex or base64) and reverse cleanly
+     because each transform is a lossless, bijective character map.
+  ========================================================== */
+  function bytesToHexCompact(bytes){
+    var out = new Array(bytes.length);
+    for (var i = 0; i < bytes.length; i++) out[i] = bytes[i].toString(16).padStart(2, '0');
+    return out.join('');
+  }
+  function hexCompactToBytes(hex){
+    var clean = hex.replace(/[^0-9a-fA-F]/g, '');
+    if (clean.length % 2 !== 0) throw new Error("Longueur hexadécimale impaire — le texte collé est probablement incomplet.");
+    var bytes = new Uint8Array(clean.length / 2);
+    for (var i = 0; i < clean.length; i += 2) bytes[i/2] = parseInt(clean.substr(i, 2), 16);
+    return bytes;
+  }
+  function bytesToHexSpaced(bytes){
+    var out = new Array(bytes.length);
+    for (var i = 0; i < bytes.length; i++) out[i] = bytes[i].toString(16).padStart(2, '0');
+    return out.join(' ');
+  }
+  function bytesToBinarySpaced(bytes){
+    var out = new Array(bytes.length);
+    for (var i = 0; i < bytes.length; i++) out[i] = bytes[i].toString(2).padStart(8, '0');
+    return out.join(' ');
+  }
+  function binarySpacedToBytes(str){
+    var parts = str.trim().split(/\s+/).filter(Boolean);
+    var bytes = new Uint8Array(parts.length);
+    parts.forEach(function(p, i){
+      if (!/^[01]{1,8}$/.test(p)) throw new Error("Séquence binaire invalide : « " + p + " ».");
+      bytes[i] = parseInt(p, 2) & 0xFF;
+    });
+    return bytes;
+  }
+
+  var FILE_METHODS = {
+    base64: {
+      encode: function(bytes){ return bytesToBase64(bytes); },
+      decode: function(str){ return base64ToBytes(str.trim().replace(/\s+/g, '')); }
+    },
+    hex: {
+      encode: function(bytes){ return bytesToHexSpaced(bytes); },
+      decode: function(str){ return hexCompactToBytes(str); }
+    },
+    binaire: {
+      encode: function(bytes){ return bytesToBinarySpaced(bytes); },
+      decode: function(str){ return binarySpacedToBytes(str); }
+    },
+    morse: {
+      // hex digits (0-9, a-f) all fall inside the Morse alphabet, so bytes -> hex -> morse round-trips exactly.
+      encode: function(bytes){ return morseEncode(bytesToHexCompact(bytes)); },
+      decode: function(str){ return hexCompactToBytes(morseDecode(str)); }
+    },
+    rot13: {
+      // ROT13 only touches a-z/A-Z and is its own inverse, so it's safe to layer on top of Base64 directly.
+      encode: function(bytes){ return rot13(bytesToBase64(bytes)); },
+      decode: function(str){ return base64ToBytes(rot13(str.trim().replace(/\s+/g, ''))); }
+    },
+    cesar: {
+      encode: function(bytes, shift){ return caesarShift(bytesToBase64(bytes), shift); },
+      decode: function(str, shift){ return base64ToBytes(caesarShift(str.trim().replace(/\s+/g, ''), -shift)); }
+    },
+    emoji: {
+      // hex is already lowercase, so emojiEncode's lowercasing is a no-op — fully lossless on hex digits.
+      encode: function(bytes){ return emojiEncode(bytesToHexCompact(bytes)); },
+      decode: function(str){ return hexCompactToBytes(emojiDecode(str)); }
+    },
+    url: {
+      encode: function(bytes){ return encodeURIComponent(bytesToBase64(bytes)); },
+      decode: function(str){ return base64ToBytes(decodeURIComponent(str.trim())); }
+    }
+  };
+
+  /* ---------- Text panel wiring ---------- */
+  var methodSelect = document.getElementById('methodSelect');
+  var shiftField = document.getElementById('shiftField');
+  var shiftInput = document.getElementById('shiftInput');
+  var textInput = document.getElementById('textInput');
+  var textOutput = document.getElementById('textOutput');
+  var textStatus = document.getElementById('textStatus');
+  var inCount = document.getElementById('inCount');
+  var textModeToggle = document.getElementById('textModeToggle');
+  var currentTextMode = 'encode';
+
+  methodSelect.addEventListener('change', function(){
+    shiftField.style.display = methodSelect.value === 'cesar' ? 'flex' : 'none';
+  });
+
+  textModeToggle.addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-mode]');
+    if (!btn) return;
+    currentTextMode = btn.dataset.mode;
+    Array.prototype.forEach.call(textModeToggle.querySelectorAll('button'), function(b){
+      b.classList.toggle('active', b === btn);
+    });
+  });
+
+  textInput.addEventListener('input', function(){
+    inCount.textContent = textInput.value.length + ' caractères';
+  });
+
+  function runConvert(){
+    var method = METHODS[methodSelect.value];
+    var input = textInput.value;
+    textStatus.textContent = '';
+    textStatus.classList.remove('error');
+    if (!input){
+      textOutput.value = '';
+      return;
+    }
+    try{
+      var fn = method[currentTextMode];
+      var result = methodSelect.value === 'cesar' ? fn(input, parseInt(shiftInput.value, 10) || 0) : fn(input);
+      textOutput.value = result;
+      textStatus.textContent = 'Conversion réussie (' + methodSelect.options[methodSelect.selectedIndex].text + ', ' + (currentTextMode === 'encode' ? 'encodage' : 'décodage') + ').';
+    } catch(err){
+      textOutput.value = '';
+      textStatus.textContent = 'Erreur : ' + err.message + ' — vérifiez le format d\'entrée pour ce mode.';
+      textStatus.classList.add('error');
+    }
+  }
+  document.getElementById('convertBtn').addEventListener('click', runConvert);
+
+  document.getElementById('swapBtn').addEventListener('click', function(){
+    var tmp = textInput.value;
+    textInput.value = textOutput.value;
+    textOutput.value = tmp;
+    currentTextMode = currentTextMode === 'encode' ? 'decode' : 'encode';
+    Array.prototype.forEach.call(textModeToggle.querySelectorAll('button'), function(b){
+      b.classList.toggle('active', b.dataset.mode === currentTextMode);
+    });
+    inCount.textContent = textInput.value.length + ' caractères';
+    textStatus.textContent = '';
+  });
+
+  document.getElementById('clearTextBtn').addEventListener('click', function(){
+    textInput.value = '';
+    textOutput.value = '';
+    textStatus.textContent = '';
+    inCount.textContent = '0 caractères';
+  });
+
+  document.getElementById('copyTextBtn').addEventListener('click', function(){
+    copyToClipboard(textOutput.value, textStatus);
+  });
+
+  function copyToClipboard(value, statusEl){
+    if (!value){ return; }
+    navigator.clipboard.writeText(value).then(function(){
+      var prev = statusEl.textContent;
+      statusEl.classList.remove('error');
+      statusEl.textContent = 'Copié dans le presse-papiers.';
+      setTimeout(function(){ if (statusEl.textContent === 'Copié dans le presse-papiers.') statusEl.textContent = prev; }, 1800);
+    }).catch(function(){
+      statusEl.textContent = 'Impossible de copier automatiquement — sélectionnez et copiez manuellement.';
+      statusEl.classList.add('error');
+    });
+  }
+
+  /* =========================================================
+     Real-signal DSP: Morse audio/image + FSK "modem" audio
+     for the six other methods. Pure functions, unit-tested
+     independently before integration.
+  ========================================================== */
+  var SAMPLE_RATE = 44100;
+  var MORSE_AUDIO_UNIT_MS = 80;
+  var MORSE_AUDIO_FREQ = 650;
+  var IMAGE_UNIT_PX = 14;
+  var FSK_UNIT_MS = 120;
+  var FSK_F0 = 900, FSK_F1 = 1700, FSK_PRE = 300;
+
+  // ---- morse string <-> abstract timeline (units), shared by audio + image ----
+  function morseStringToTimeline(morseStr){
+    var words = morseStr.trim().split(' / ');
+    var timeline = [];
+    words.forEach(function(word, wi){
+      var letters = word.trim().split(/\s+/).filter(Boolean);
+      letters.forEach(function(letter, li){
+        for (var i = 0; i < letter.length; i++){
+          var ch = letter[i];
+          timeline.push({ on: true, len: ch === '-' ? 3 : 1 });
+          timeline.push({ on: false, len: 1 });
+        }
+        if (li < letters.length - 1) timeline[timeline.length - 1].len = 3;
+      });
+      if (wi < words.length - 1) timeline[timeline.length - 1].len = 7;
+    });
+    if (timeline.length && !timeline[timeline.length - 1].on) timeline.pop();
+    return timeline;
+  }
+
+  // ---- shared run classifier: on/off run lengths (ms or px) -> morse string ----
+  function classifyRunsToMorse(runs){
+    if (!runs.length) return '';
+    var onLens = runs.filter(function(r){ return r.on; }).map(function(r){ return r.len; });
+    if (!onLens.length) return '';
+    var minOn = Math.min.apply(null, onLens), maxOn = Math.max.apply(null, onLens);
+    var splitThresh = (minOn + maxOn) / 2;
+    var dotLens = onLens.filter(function(l){ return l <= splitThresh; });
+    var unit = dotLens.length ? dotLens.reduce(function(a,b){ return a+b; }, 0) / dotLens.length : minOn;
+    if (unit <= 0) unit = minOn || 1;
+    var result = '';
+    runs.forEach(function(run){
+      if (run.on){ result += (run.len > unit*2) ? '-' : '.'; }
+      else {
+        if (run.len >= unit*5) result += ' / ';
+        else if (run.len >= unit*2) result += ' ';
+      }
+    });
+    return result;
+  }
+
+  // ---- audio synth primitives ----
+  function sineSegment(freq, durMs, sampleRate, fadeMs){
+    var n = Math.max(1, Math.round(durMs/1000*sampleRate));
+    var out = new Float32Array(n);
+    if (freq > 0){
+      var fadeN = Math.min(n/2, Math.round(fadeMs/1000*sampleRate));
+      for (var i = 0; i < n; i++){
+        var s = Math.sin(2*Math.PI*freq*i/sampleRate);
+        var env = 1;
+        if (i < fadeN) env = i/fadeN;
+        else if (i > n - fadeN) env = (n-i)/fadeN;
+        out[i] = s*env*0.8;
+      }
+    }
+    return out;
+  }
+  function concatFloat32(arrays){
+    var total = arrays.reduce(function(a,b){ return a+b.length; }, 0);
+    var out = new Float32Array(total);
+    var offset = 0;
+    arrays.forEach(function(a){ out.set(a, offset); offset += a.length; });
+    return out;
+  }
+  function floatsToWavBlob(samples, sampleRate){
+    var n = samples.length;
+    var buffer = new ArrayBuffer(44 + n*2);
+    var view = new DataView(buffer);
+    function writeStr(off, str){ for (var i=0;i<str.length;i++) view.setUint8(off+i, str.charCodeAt(i)); }
+    writeStr(0, 'RIFF');
+    view.setUint32(4, 36 + n*2, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate*2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, 'data');
+    view.setUint32(40, n*2, true);
+    for (var i = 0; i < n; i++){
+      var s = Math.max(-1, Math.min(1, samples[i]));
+      view.setInt16(44 + i*2, s < 0 ? s*0x8000 : s*0x7FFF, true);
+    }
+    return new Blob([buffer], { type: 'audio/wav' });
+  }
+
+  // ---- Morse audio: text -> beeps ----
+  function synthMorseAudio(text){
+    var morseStr = morseEncode(text);
+    if (!morseStr) throw new Error('Rien à convertir (aucun caractère reconnu en Morse).');
+    var timeline = morseStringToTimeline(morseStr);
+    var segs = timeline.map(function(seg){
+      return sineSegment(seg.on ? MORSE_AUDIO_FREQ : 0, seg.len*MORSE_AUDIO_UNIT_MS, SAMPLE_RATE, 4);
+    });
+    var lead = sineSegment(0, 200, SAMPLE_RATE, 0);
+    return concatFloat32([lead].concat(segs).concat([lead]));
+  }
+
+  // ---- Morse audio: beeps -> text (envelope/RMS detection) ----
+  function decodeMorseAudio(samples, sampleRate){
+    var windowMs = 10;
+    var windowN = Math.max(1, Math.round(windowMs/1000*sampleRate));
+    var nWindows = Math.floor(samples.length/windowN);
+    if (nWindows < 3) throw new Error('Signal audio trop court ou vide.');
+    var rms = new Array(nWindows);
+    var maxRms = 0;
+    for (var w = 0; w < nWindows; w++){
+      var sum = 0;
+      for (var i = 0; i < windowN; i++){ var v = samples[w*windowN+i]; sum += v*v; }
+      var r = Math.sqrt(sum/windowN);
+      rms[w] = r;
+      if (r > maxRms) maxRms = r;
+    }
+    if (maxRms < 0.001) throw new Error('Aucun signal détecté (fichier silencieux ?).');
+    var threshold = maxRms*0.3;
+    var states = rms.map(function(r){ return r > threshold; });
+    var runs = [];
+    var curState = states[0], curLen = 1;
+    for (var i = 1; i < states.length; i++){
+      if (states[i] === curState){ curLen++; }
+      else { runs.push({ on: curState, len: curLen*windowMs }); curState = states[i]; curLen = 1; }
+    }
+    runs.push({ on: curState, len: curLen*windowMs });
+    while (runs.length && !runs[0].on) runs.shift();
+    while (runs.length && !runs[runs.length-1].on) runs.pop();
+    if (!runs.length) throw new Error('Aucun bip détecté dans ce fichier.');
+    var morseStr = classifyRunsToMorse(runs);
+    var text = morseDecode(morseStr);
+    if (!text.trim()) throw new Error('Signal détecté mais non reconnaissable comme Morse.');
+    return text;
+  }
+
+  // ---- Morse image: text -> dots/dashes drawn on canvas ----
+  function drawMorseImage(text){
+    var morseStr = morseEncode(text);
+    if (!morseStr) throw new Error('Rien à convertir (aucun caractère reconnu en Morse).');
+    var timeline = morseStringToTimeline(morseStr);
+    var u = IMAGE_UNIT_PX;
+    var margin = u*2;
+    var totalUnits = timeline.reduce(function(a,s){ return a+s.len; }, 0);
+    var width = Math.min(4000, Math.max(200, margin*2 + totalUnits*u));
+    var height = u*4;
+    var canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#000000';
+    var x = margin;
+    var midY = height/2;
+    timeline.forEach(function(seg){
+      var lenPx = seg.len*u;
+      if (seg.on){ ctx.fillRect(x, midY - u/2, lenPx, u); }
+      x += lenPx;
+    });
+    return canvas;
+  }
+
+  // ---- Morse image: dots/dashes -> text (pixel-column darkness profile) ----
+  function decodeMorseImage(img){
+    var canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    var w = canvas.width, h = canvas.height;
+    if (w < 4 || h < 4) throw new Error('Image trop petite pour être analysée.');
+    var data = ctx.getImageData(0, 0, w, h).data;
+    var sampleTop = Math.floor(h*0.3), sampleBottom = Math.ceil(h*0.7);
+    var profile = new Array(w);
+    for (var x = 0; x < w; x++){
+      var sum = 0, count = 0;
+      for (var y = sampleTop; y < sampleBottom; y++){
+        var idx = (y*w + x)*4;
+        var lum = 0.299*data[idx] + 0.587*data[idx+1] + 0.114*data[idx+2];
+        sum += lum; count++;
+      }
+      profile[x] = (sum/count) < 128;
+    }
+    var runs = [];
+    var cur = profile[0], len = 1;
+    for (var i = 1; i < profile.length; i++){
+      if (profile[i] === cur){ len++; }
+      else { runs.push({ on: cur, len: len }); cur = profile[i]; len = 1; }
+    }
+    runs.push({ on: cur, len: len });
+    while (runs.length && !runs[0].on) runs.shift();
+    while (runs.length && !runs[runs.length-1].on) runs.pop();
+    if (!runs.length) throw new Error('Aucune forme détectée dans cette image.');
+    var morseStr = classifyRunsToMorse(runs);
+    var text = morseDecode(morseStr);
+    if (!text.trim()) throw new Error('Motif détecté mais non reconnaissable comme Morse.');
+    return text;
+  }
+
+  // ---- FSK "modem" audio (used by the 6 non-Morse methods) ----
+  function numberToBits(num, nBits){
+    var bits = [];
+    for (var i = nBits-1; i >= 0; i--) bits.push((num >> i) & 1);
+    return bits;
+  }
+  function bitsToNumber(bits){
+    var n = 0;
+    for (var i = 0; i < bits.length; i++) n = (n << 1) | bits[i];
+    return n >>> 0;
+  }
+  function bytesToBitsArr(bytes){
+    var bits = [];
+    bytes.forEach(function(b){ for (var i = 7; i >= 0; i--) bits.push((b >> i) & 1); });
+    return bits;
+  }
+  function bitsToBytesArr(bits){
+    var bytes = new Uint8Array(Math.floor(bits.length/8));
+    for (var i = 0; i < bytes.length; i++){
+      var b = 0;
+      for (var j = 0; j < 8; j++) b = (b << 1) | bits[i*8+j];
+      bytes[i] = b;
+    }
+    return bytes;
+  }
+  function synthFskAudio(method, text, shift){
+    var encStr = method === 'cesar' ? METHODS.cesar.encode(text, shift) : METHODS[method].encode(text);
+    if (!encStr) throw new Error('Rien à convertir.');
+    var bytes = textToBytes(encStr);
+    if (bytes.length > 4000) throw new Error('Message trop long pour le mode audio (max ~4000 caractères encodés).');
+    var segs = [ sineSegment(FSK_PRE, FSK_UNIT_MS*3, SAMPLE_RATE, 4) ];
+    var lenBits = numberToBits(bytes.length, 16);
+    var allBits = lenBits.concat(bytesToBitsArr(bytes));
+    allBits.forEach(function(b){ segs.push(sineSegment(b ? FSK_F1 : FSK_F0, FSK_UNIT_MS, SAMPLE_RATE, 2)); });
+    var lead = sineSegment(0, 200, SAMPLE_RATE, 0);
+    return concatFloat32([lead].concat(segs).concat([lead]));
+  }
+  function goertzelMag(samples, offset, length, sampleRate, freq){
+    var k = Math.round(0.5 + (length*freq)/sampleRate);
+    var w = (2*Math.PI/length)*k;
+    var cosine = Math.cos(w), sine = Math.sin(w), coeff = 2*cosine;
+    var q0=0, q1=0, q2=0;
+    var end = Math.min(offset+length, samples.length);
+    for (var i = offset; i < end; i++){ q0 = coeff*q1 - q2 + samples[i]; q2 = q1; q1 = q0; }
+    var real = q1 - q2*cosine, imag = q2*sine;
+    return Math.sqrt(real*real + imag*imag);
+  }
+  function findSignalOnset(samples, sampleRate, windowMs){
+    var windowN = Math.max(1, Math.round(windowMs/1000*sampleRate));
+    var nWindows = Math.floor(samples.length/windowN);
+    for (var w = 0; w < nWindows; w++){
+      var sum = 0;
+      for (var i = 0; i < windowN; i++){ var v = samples[w*windowN+i]; sum += v*v; }
+      if (Math.sqrt(sum/windowN) > 0.05) return w*windowN;
+    }
+    return 0;
+  }
+  function decodeFskAudio(samples, sampleRate, method, shift){
+    var unitN = Math.round(FSK_UNIT_MS/1000*sampleRate);
+    var onset = findSignalOnset(samples, sampleRate, 5);
+    if (onset === 0 && samples.every(function(s){ return Math.abs(s) < 0.01; })) throw new Error('Aucun signal détecté (fichier silencieux ?).');
+    var dataStart = onset + 3*unitN;
+
+    function readBits(startSample, nBits){
+      var bits = [];
+      for (var i = 0; i < nBits; i++){
+        var off = startSample + i*unitN;
+        if (off + unitN > samples.length) throw new Error('Signal incomplet — le fichier semble tronqué.');
+        var m0 = goertzelMag(samples, off, unitN, sampleRate, FSK_F0);
+        var m1 = goertzelMag(samples, off, unitN, sampleRate, FSK_F1);
+        bits.push(m1 > m0 ? 1 : 0);
+      }
+      return bits;
+    }
+
+    var lenBits = readBits(dataStart, 16);
+    var nBytes = bitsToNumber(lenBits);
+    if (nBytes <= 0 || nBytes > 20000) throw new Error('Préambule non reconnu — vérifiez que ce fichier a bien été généré ici en mode Audio → Texte.');
+    var payloadBits = readBits(dataStart + 16*unitN, nBytes*8);
+    var bytes = bitsToBytesArr(payloadBits);
+    var encStr = bytesToText(bytes);
+    var fn = METHODS[method].decode;
+    var result = method === 'cesar' ? fn(encStr, shift) : fn(encStr);
+    if (!result) throw new Error('Décodage vide — vérifiez que la méthode choisie correspond à celle utilisée pour générer ce fichier.');
+    return result;
+  }
+
+  /* =========================================================
+     Tabs
+  ========================================================== */
+  var tabButtons = document.querySelectorAll('.tab-btn');
+  tabButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabButtons.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* =========================================================
+     Generic file <-> text module (used by image + audio)
+     Supports all 8 methods via FILE_METHODS.
+  ========================================================== */
+  var METHOD_LABELS = {
+    base64:'Base64', hex:'Hexadécimal', binaire:'Binaire', morse:'Morse',
+    rot13:'ROT13', cesar:'César', emoji:'Emoji', url:'URL'
+  };
+  var VERBOSE_METHODS = { binaire:true, morse:true }; // methods whose output balloons in size
+
+  function wireFileCodec(cfg){
+    var dropzone = document.getElementById(cfg.dropId);
+    var fileInput = document.getElementById(cfg.fileInputId);
+    var encodeBlock = document.getElementById(cfg.encodeBlockId);
+    var decodeBlock = document.getElementById(cfg.decodeBlockId);
+    var encodePreview = document.getElementById(cfg.encodePreviewId);
+    var decodePreview = document.getElementById(cfg.decodePreviewId);
+    var output = document.getElementById(cfg.outputId);
+    var status = document.getElementById(cfg.statusId);
+    var modeToggle = document.getElementById(cfg.modeToggleId);
+    var inputText = document.getElementById(cfg.inputB64Id);
+    var mimeSelect = document.getElementById(cfg.mimeSelectId);
+    var decodeBtn = document.getElementById(cfg.decodeBtnId);
+    var copyBtn = document.getElementById(cfg.copyBtnId);
+    var methodSelectEl = document.getElementById(cfg.methodSelectId);
+    var shiftField = document.getElementById(cfg.shiftFieldId);
+    var shiftInputEl = document.getElementById(cfg.shiftInputId);
+
+    var lastFileBytes = null;   // Uint8Array of the last loaded file, kept so switching method re-encodes instantly
+    var lastFile = null;
+    var lastObjectUrl = null;
+
+    function revokeLast(){
+      if (lastObjectUrl){ URL.revokeObjectURL(lastObjectUrl); lastObjectUrl = null; }
+    }
+
+    methodSelectEl.addEventListener('change', function(){
+      shiftField.style.display = methodSelectEl.value === 'cesar' ? 'flex' : 'none';
+      if (lastFileBytes) encodeCurrentFile();
+    });
+    shiftInputEl.addEventListener('input', function(){
+      if (methodSelectEl.value === 'cesar' && lastFileBytes) encodeCurrentFile();
+    });
+
+    modeToggle.addEventListener('click', function(e){
+      var btn = e.target.closest('button[data-mode]');
+      if (!btn) return;
+      Array.prototype.forEach.call(modeToggle.querySelectorAll('button'), function(b){
+        b.classList.toggle('active', b === btn);
+      });
+      var isEncode = btn.dataset.mode === 'encode';
+      encodeBlock.style.display = isEncode ? 'block' : 'none';
+      decodeBlock.style.display = isEncode ? 'none' : 'block';
+      status.textContent = '';
+    });
+
+    function encodeCurrentFile(){
+      var method = methodSelectEl.value;
+      status.textContent = '';
+      status.classList.remove('error');
+      if (VERBOSE_METHODS[method] && lastFile.size > 2 * 1024 * 1024){
+        status.textContent = 'Attention : ' + METHOD_LABELS[method] + ' produit un texte très volumineux pour un fichier de ' + Math.round(lastFile.size/1024/1024) + ' Mo — la conversion peut être lente.';
+      }
+      try{
+        var fn = FILE_METHODS[method].encode;
+        var shift = parseInt(shiftInputEl.value, 10) || 0;
+        var result = method === 'cesar' ? fn(lastFileBytes, shift) : fn(lastFileBytes);
+        output.value = result;
+        var suffix = 'Fichier converti (' + Math.round(lastFile.size/1024) + ' Ko → ' + Math.round(result.length/1024) + ' Ko en ' + METHOD_LABELS[method] + ').';
+        status.textContent = status.textContent ? status.textContent + ' ' + suffix : suffix;
+      } catch(err){
+        output.value = '';
+        status.textContent = 'Erreur de conversion : ' + err.message;
+        status.classList.add('error');
+      }
+    }
+
+    function handleFile(file){
+      if (!file) return;
+      lastFile = file;
+      status.textContent = '';
+      status.classList.remove('error');
+      var reader = new FileReader();
+      reader.onload = function(){
+        lastFileBytes = new Uint8Array(reader.result);
+        encodePreview.innerHTML = '';
+        revokeLast();
+        var blob = new Blob([lastFileBytes], { type: file.type || cfg.defaultMime });
+        lastObjectUrl = URL.createObjectURL(blob);
+        var el = cfg.previewTag === 'img' ? document.createElement('img') : document.createElement('audio');
+        el.src = lastObjectUrl;
+        if (cfg.previewTag === 'audio') el.controls = true;
+        encodePreview.appendChild(el);
+        encodeCurrentFile();
+      };
+      reader.onerror = function(){
+        status.textContent = 'Erreur de lecture du fichier.';
+        status.classList.add('error');
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    dropzone.addEventListener('click', function(){ fileInput.click(); });
+    fileInput.addEventListener('change', function(){ handleFile(fileInput.files[0]); });
+    ['dragenter','dragover'].forEach(function(evt){
+      dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.add('drag'); });
+    });
+    ['dragleave','drop'].forEach(function(evt){
+      dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); });
+    });
+    dropzone.addEventListener('drop', function(e){
+      var file = e.dataTransfer.files[0];
+      handleFile(file);
+    });
+
+    copyBtn.addEventListener('click', function(){ copyToClipboard(output.value, status); });
+
+    decodeBtn.addEventListener('click', function(){
+      status.textContent = '';
+      status.classList.remove('error');
+      var raw = inputText.value.trim();
+      var method = methodSelectEl.value;
+      if (!raw){ status.textContent = 'Collez d\'abord le texte encodé.'; status.classList.add('error'); return; }
+      try{
+        var bytes, mime;
+        var dataUrlMatch = method === 'base64' ? raw.match(/^data:([^;]+);base64,([\s\S]*)$/) : null;
+        if (dataUrlMatch){
+          bytes = base64ToBytes(dataUrlMatch[2].replace(/\s+/g, ''));
+          mime = dataUrlMatch[1];
+        } else {
+          var fn = FILE_METHODS[method].decode;
+          var shift = parseInt(shiftInputEl.value, 10) || 0;
+          bytes = method === 'cesar' ? fn(raw, shift) : fn(raw);
+          mime = mimeSelect.value;
+        }
+
+        decodePreview.innerHTML = '';
+        revokeLast();
+        var blob = new Blob([bytes], { type: mime });
+        lastObjectUrl = URL.createObjectURL(blob);
+        var el = cfg.previewTag === 'img' ? document.createElement('img') : document.createElement('audio');
+        el.src = lastObjectUrl;
+        if (cfg.previewTag === 'audio') el.controls = true;
+        el.onerror = function(){
+          status.textContent = 'Le navigateur n\'a pas pu afficher ce contenu — vérifiez la méthode, le type de fichier et que le texte est complet.';
+          status.classList.add('error');
+        };
+        decodePreview.appendChild(el);
+
+        var link = document.createElement('a');
+        link.href = lastObjectUrl;
+        link.download = cfg.downloadName;
+        link.textContent = 'Télécharger le fichier';
+        link.className = 'btn ghost';
+        link.style.textDecoration = 'none';
+        decodePreview.appendChild(link);
+
+        status.textContent = 'Aperçu généré (' + METHOD_LABELS[method] + ', ' + Math.round(bytes.length/1024) + ' Ko).';
+      } catch(err){
+        status.textContent = 'Décodage impossible : ' + err.message;
+        status.classList.add('error');
+      }
+    });
+  }
+
+  wireFileCodec({
+    dropId:'imageDrop', fileInputId:'imageFileInput',
+    encodeBlockId:'imageEncodeBlock', decodeBlockId:'imageDecodeBlock',
+    encodePreviewId:'imageEncodePreview', decodePreviewId:'imageDecodePreview',
+    outputId:'imageOutput', statusId:'imageStatus', modeToggleId:'imageModeToggle',
+    inputB64Id:'imageInputB64', mimeSelectId:'imageMimeSelect', decodeBtnId:'decodeImageBtn',
+    copyBtnId:'copyImageBtn', methodSelectId:'imageMethodSelect', shiftFieldId:'imageShiftField',
+    shiftInputId:'imageShiftInput', previewTag:'img', downloadName:'image-decodee.png', defaultMime:'image/png'
+  });
+
+  wireFileCodec({
+    dropId:'audioDrop', fileInputId:'audioFileInput',
+    encodeBlockId:'audioEncodeBlock', decodeBlockId:'audioDecodeBlock',
+    encodePreviewId:'audioEncodePreview', decodePreviewId:'audioDecodePreview',
+    outputId:'audioOutput', statusId:'audioStatus', modeToggleId:'audioModeToggle',
+    inputB64Id:'audioInputB64', mimeSelectId:'audioMimeSelect', decodeBtnId:'decodeAudioBtn',
+    copyBtnId:'copyAudioBtn', methodSelectId:'audioMethodSelect', shiftFieldId:'audioShiftField',
+    shiftInputId:'audioShiftInput', previewTag:'audio', downloadName:'audio-decode.mp3', defaultMime:'audio/mpeg'
+  });
+
+  /* =========================================================
+     Sub-mode toggles (byte-block vs real-signal block)
+  ========================================================== */
+  function wireSubMode(toggleId, byteCardId, signalCardId){
+    var toggle = document.getElementById(toggleId);
+    var byteCard = document.getElementById(byteCardId);
+    var signalCard = document.getElementById(signalCardId);
+    toggle.addEventListener('click', function(e){
+      var btn = e.target.closest('button[data-submode]');
+      if (!btn) return;
+      Array.prototype.forEach.call(toggle.querySelectorAll('button'), function(b){
+        b.classList.toggle('active', b === btn);
+      });
+      var isByte = btn.dataset.submode === 'byte';
+      byteCard.style.display = isByte ? 'block' : 'none';
+      signalCard.style.display = isByte ? 'none' : 'block';
+    });
+  }
+  wireSubMode('imageSubModeToggle', 'imageByteCard', 'imageSignalCard');
+  wireSubMode('audioSubModeToggle', 'audioByteCard', 'audioSignalCard');
+
+  /* =========================================================
+     AUDIO — real signal (Texte <-> bips)
+  ========================================================== */
+  (function(){
+    var methodSelectEl = document.getElementById('audioSignalMethodSelect');
+    var shiftField = document.getElementById('audioSignalShiftField');
+    var shiftInputEl = document.getElementById('audioSignalShiftInput');
+    var modeToggle = document.getElementById('audioSignalModeToggle');
+    var encodeBlock = document.getElementById('audioSignalEncodeBlock');
+    var decodeBlock = document.getElementById('audioSignalDecodeBlock');
+    var textInputEl = document.getElementById('audioSignalInput');
+    var generateBtn = document.getElementById('generateAudioSignalBtn');
+    var encodePreview = document.getElementById('audioSignalEncodePreview');
+    var dropzone = document.getElementById('audioSignalDrop');
+    var fileInput = document.getElementById('audioSignalFileInput');
+    var decodeBtn = document.getElementById('decodeAudioSignalBtn');
+    var outputEl = document.getElementById('audioSignalOutput');
+    var copyBtn = document.getElementById('copyAudioSignalBtn');
+    var status = document.getElementById('audioSignalStatus');
+    var lastObjectUrl = null;
+    var lastFile = null;
+
+    methodSelectEl.addEventListener('change', function(){
+      shiftField.style.display = methodSelectEl.value === 'cesar' ? 'flex' : 'none';
+    });
+    modeToggle.addEventListener('click', function(e){
+      var btn = e.target.closest('button[data-mode]');
+      if (!btn) return;
+      Array.prototype.forEach.call(modeToggle.querySelectorAll('button'), function(b){
+        b.classList.toggle('active', b === btn);
+      });
+      var isEncode = btn.dataset.mode === 'encode';
+      encodeBlock.style.display = isEncode ? 'block' : 'none';
+      decodeBlock.style.display = isEncode ? 'none' : 'block';
+      status.textContent = '';
+    });
+
+    generateBtn.addEventListener('click', function(){
+      status.textContent = '';
+      status.classList.remove('error');
+      var text = textInputEl.value;
+      if (!text){ status.textContent = 'Écrivez d\'abord un message.'; status.classList.add('error'); return; }
+      try{
+        var method = methodSelectEl.value;
+        var shift = parseInt(shiftInputEl.value, 10) || 0;
+        var samples = method === 'morse' ? synthMorseAudio(text) : synthFskAudio(method, text, shift);
+        var durationSec = samples.length / SAMPLE_RATE;
+        if (lastObjectUrl) URL.revokeObjectURL(lastObjectUrl);
+        var blob = floatsToWavBlob(samples, SAMPLE_RATE);
+        lastObjectUrl = URL.createObjectURL(blob);
+        encodePreview.innerHTML = '';
+        var audioEl = document.createElement('audio');
+        audioEl.controls = true;
+        audioEl.src = lastObjectUrl;
+        encodePreview.appendChild(audioEl);
+        var link = document.createElement('a');
+        link.href = lastObjectUrl;
+        link.download = 'signal-' + method + '.wav';
+        link.textContent = 'Télécharger le .wav';
+        link.className = 'btn ghost';
+        link.style.textDecoration = 'none';
+        link.style.marginTop = '4px';
+        encodePreview.appendChild(link);
+        status.textContent = 'Audio généré (' + METHOD_LABELS[method] + ', ' + durationSec.toFixed(1) + ' s).';
+      } catch(err){
+        encodePreview.innerHTML = '';
+        status.textContent = 'Erreur : ' + err.message;
+        status.classList.add('error');
+      }
+    });
+
+    function handleFile(file){
+      if (!file) return;
+      lastFile = file;
+      status.textContent = 'Fichier chargé (' + Math.round(file.size/1024) + ' Ko) — cliquez sur « Décoder l\'audio ».';
+      status.classList.remove('error');
+    }
+    dropzone.addEventListener('click', function(){ fileInput.click(); });
+    fileInput.addEventListener('change', function(){ handleFile(fileInput.files[0]); });
+    ['dragenter','dragover'].forEach(function(evt){
+      dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.add('drag'); });
+    });
+    ['dragleave','drop'].forEach(function(evt){
+      dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); });
+    });
+    dropzone.addEventListener('drop', function(e){ handleFile(e.dataTransfer.files[0]); });
+
+    decodeBtn.addEventListener('click', function(){
+      status.textContent = '';
+      status.classList.remove('error');
+      if (!lastFile){ status.textContent = 'Déposez d\'abord un fichier audio.'; status.classList.add('error'); return; }
+      status.textContent = 'Analyse du signal en cours…';
+      var method = methodSelectEl.value;
+      var shift = parseInt(shiftInputEl.value, 10) || 0;
+      var reader = new FileReader();
+      reader.onload = function(){
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        var ctx = new AudioCtx();
+        ctx.decodeAudioData(reader.result.slice(0)).then(function(audioBuffer){
+          var samples = audioBuffer.getChannelData(0);
+          try{
+            var text = method === 'morse' ? decodeMorseAudio(samples, audioBuffer.sampleRate) : decodeFskAudio(samples, audioBuffer.sampleRate, method, shift);
+            outputEl.value = text;
+            status.textContent = 'Signal décodé avec succès (' + METHOD_LABELS[method] + ').';
+          } catch(err){
+            outputEl.value = '';
+            status.textContent = 'Décodage impossible : ' + err.message;
+            status.classList.add('error');
+          }
+          ctx.close();
+        }).catch(function(){
+          status.textContent = 'Ce fichier audio n\'a pas pu être lu par le navigateur (format non supporté ?).';
+          status.classList.add('error');
+          ctx.close();
+        });
+      };
+      reader.onerror = function(){
+        status.textContent = 'Erreur de lecture du fichier.';
+        status.classList.add('error');
+      };
+      reader.readAsArrayBuffer(lastFile);
+    });
+
+    copyBtn.addEventListener('click', function(){ copyToClipboard(outputEl.value, status); });
+  })();
+
+  /* =========================================================
+     IMAGE — real signal (Texte <-> Morse visuel points/tirets)
+  ========================================================== */
+  (function(){
+    var modeToggle = document.getElementById('imageSignalModeToggle');
+    var encodeBlock = document.getElementById('imageSignalEncodeBlock');
+    var decodeBlock = document.getElementById('imageSignalDecodeBlock');
+    var textInputEl = document.getElementById('imageSignalInput');
+    var generateBtn = document.getElementById('generateImageSignalBtn');
+    var encodePreview = document.getElementById('imageSignalEncodePreview');
+    var dropzone = document.getElementById('imageSignalDrop');
+    var fileInput = document.getElementById('imageSignalFileInput');
+    var decodeBtn = document.getElementById('decodeImageSignalBtn');
+    var outputEl = document.getElementById('imageSignalOutput');
+    var copyBtn = document.getElementById('copyImageSignalBtn');
+    var status = document.getElementById('imageSignalStatus');
+    var lastFile = null;
+
+    modeToggle.addEventListener('click', function(e){
+      var btn = e.target.closest('button[data-mode]');
+      if (!btn) return;
+      Array.prototype.forEach.call(modeToggle.querySelectorAll('button'), function(b){
+        b.classList.toggle('active', b === btn);
+      });
+      var isEncode = btn.dataset.mode === 'encode';
+      encodeBlock.style.display = isEncode ? 'block' : 'none';
+      decodeBlock.style.display = isEncode ? 'none' : 'block';
+      status.textContent = '';
+    });
+
+    generateBtn.addEventListener('click', function(){
+      status.textContent = '';
+      status.classList.remove('error');
+      var text = textInputEl.value;
+      if (!text){ status.textContent = 'Écrivez d\'abord un message.'; status.classList.add('error'); return; }
+      try{
+        var canvas = drawMorseImage(text);
+        encodePreview.innerHTML = '';
+        canvas.style.maxWidth = '100%';
+        canvas.style.border = '1px solid var(--line)';
+        canvas.style.borderRadius = '2px';
+        encodePreview.appendChild(canvas);
+        canvas.toBlob(function(blob){
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          link.download = 'morse-visuel.png';
+          link.textContent = 'Télécharger le PNG';
+          link.className = 'btn ghost';
+          link.style.textDecoration = 'none';
+          link.style.marginTop = '10px';
+          encodePreview.appendChild(link);
+        });
+        status.textContent = 'Image générée (' + canvas.width + '×' + canvas.height + 'px).';
+      } catch(err){
+        encodePreview.innerHTML = '';
+        status.textContent = 'Erreur : ' + err.message;
+        status.classList.add('error');
+      }
+    });
+
+    function handleFile(file){
+      if (!file) return;
+      lastFile = file;
+      status.textContent = 'Image chargée — cliquez sur « Décoder l\'image ».';
+      status.classList.remove('error');
+    }
+    dropzone.addEventListener('click', function(){ fileInput.click(); });
+    fileInput.addEventListener('change', function(){ handleFile(fileInput.files[0]); });
+    ['dragenter','dragover'].forEach(function(evt){
+      dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.add('drag'); });
+    });
+    ['dragleave','drop'].forEach(function(evt){
+      dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); });
+    });
+    dropzone.addEventListener('drop', function(e){ handleFile(e.dataTransfer.files[0]); });
+
+    decodeBtn.addEventListener('click', function(){
+      status.textContent = '';
+      status.classList.remove('error');
+      if (!lastFile){ status.textContent = 'Déposez d\'abord une image.'; status.classList.add('error'); return; }
+      var url = URL.createObjectURL(lastFile);
+      var img = new Image();
+      img.onload = function(){
+        try{
+          var text = decodeMorseImage(img);
+          outputEl.value = text;
+          status.textContent = 'Image décodée avec succès.';
+        } catch(err){
+          outputEl.value = '';
+          status.textContent = 'Décodage impossible : ' + err.message;
+          status.classList.add('error');
+        }
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = function(){
+        status.textContent = 'Impossible de charger cette image.';
+        status.classList.add('error');
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    });
+
+    copyBtn.addEventListener('click', function(){ copyToClipboard(outputEl.value, status); });
+  })();
+
+})();
+</script>
+</body>
+</html>
