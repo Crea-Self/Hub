@@ -1,0 +1,2927 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthy AIO — Repas Complets Sport & Forme</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1A1A2E;
+      --bg2: #16213E;
+      --bg3: #0F3460;
+      --card: #1E2A45;
+      --card-hover: #243352;
+      --green: #00D4AA;
+      --orange: #FF6B35;
+      --yellow: #FFD166;
+      --white: #F0EDE8;
+      --muted: #8892A4;
+      --border: rgba(0, 212, 170, 0.15);
+      --prot: #00D4AA;
+      --gluc: #FFD166;
+      --lip: #FF6B35;
+      --fib: #A78BFA;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg3) 60%, #1A3A5C 100%);
+      padding: 60px 40px 50px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero::before {
+      content: 'AIO';
+      position: absolute;
+      right: -20px;
+      top: -30px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 220px;
+      color: rgba(0, 212, 170, 0.04);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 8vw, 90px);
+      line-height: 0.9;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      color: var(--green);
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-tag {
+      background: rgba(0, 212, 170, 0.1);
+      border: 1px solid rgba(0, 212, 170, 0.25);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 100px;
+      letter-spacing: 0.5px;
+    }
+
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      padding: 32px 0 24px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 18px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .filter-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--bg);
+      font-weight: 700;
+    }
+
+    .section-header {
+      margin-bottom: 28px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+      margin-bottom: 70px;
+    }
+
+    .recipe-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.25s;
+      position: relative;
+    }
+
+    .recipe-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(0, 212, 170, 0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .recipe-card.hidden {
+      display: none;
+    }
+
+    .card-header {
+      padding: 22px 22px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .card-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .card-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 100px;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-time {
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--orange);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .badge-prep {
+      background: rgba(167, 139, 250, 0.15);
+      color: #A78BFA;
+      border: 1px solid rgba(167, 139, 250, 0.3);
+    }
+
+    .badge-moment {
+      background: rgba(255, 209, 102, 0.15);
+      color: var(--yellow);
+      border: 1px solid rgba(255, 209, 102, 0.3);
+    }
+
+    .card-emoji {
+      font-size: 32px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .card-body {
+      padding: 16px 22px 20px;
+    }
+
+    /* INGREDIENTS LIST */
+    .ingr-list {
+      list-style: none;
+      margin-bottom: 14px;
+    }
+
+    .ingr-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 13px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--white);
+    }
+
+    .ingr-list li:last-child {
+      border-bottom: none;
+    }
+
+    .ingr-name {
+      color: var(--muted);
+    }
+
+    .ingr-qty {
+      font-weight: 600;
+      color: var(--white);
+      font-size: 12px;
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+
+    .card-tip {
+      font-size: 12px;
+      color: var(--yellow);
+      background: rgba(255, 209, 102, 0.08);
+      border-left: 2px solid var(--yellow);
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    /* MACROS GRID */
+    .macros {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .macro {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .macro-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .macro-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .macro.prot .macro-value {
+      color: var(--prot);
+    }
+
+    .macro.gluc .macro-value {
+      color: var(--gluc);
+    }
+
+    .macro.lip .macro-value {
+      color: var(--lip);
+    }
+
+    .macro.fib .macro-value {
+      color: var(--fib);
+    }
+
+    /* MACRO TABLE RECAP */
+    .macro-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .macro-table th {
+      background: rgba(0, 212, 170, 0.08);
+      color: var(--green);
+      font-weight: 700;
+      padding: 6px 8px;
+      text-align: left;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .macro-table td {
+      padding: 5px 8px;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .macro-table tr:not(.total-row) td:last-child {
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .macro-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .macro-table .total-row td {
+      color: var(--white);
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 12px;
+    }
+
+    .macro-table .total-row td:last-child {
+      text-align: right;
+    }
+
+    .recap-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      margin-bottom: 8px;
+      user-select: none;
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      padding: 0;
+    }
+
+    .recap-toggle:hover {
+      color: var(--green);
+    }
+
+    .recap-toggle .arrow {
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .recap-toggle.open .arrow {
+      transform: rotate(90deg);
+    }
+
+    .recap-body {
+      display: none;
+    }
+
+    .recap-body.open {
+      display: block;
+    }
+
+    /* LÉGENDE */
+    .macro-legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      padding: 16px 20px;
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* TIPS */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 70px;
+    }
+
+    .tip-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      transition: all 0.2s;
+    }
+
+    .tip-card:hover {
+      border-color: rgba(0, 212, 170, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .tip-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .tip-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--white);
+      margin-bottom: 10px;
+      line-height: 1.1;
+    }
+
+    .tip-text {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .tip-text strong {
+      color: var(--white);
+    }
+
+    .tip-highlight {
+      display: inline-block;
+      background: rgba(0, 212, 170, 0.1);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    /* TABLE ALIMENTS */
+    .food-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 70px;
+      font-size: 13px;
+    }
+
+    .food-table th {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--muted);
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 1px;
+    }
+
+    .food-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--white);
+      vertical-align: middle;
+    }
+
+    .food-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .food-table .cat-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 18px 16px 6px;
+      color: var(--green);
+    }
+
+    .fav {
+      color: var(--green);
+    }
+
+    .avoid {
+      color: var(--orange);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    footer span {
+      color: var(--green);
+    }
+
+    .scroll-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--green);
+      color: var(--bg);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 212, 170, 0.4);
+      transition: all 0.2s;
+      z-index: 100;
+    }
+
+    .scroll-top:hover {
+      transform: translateY(-2px);
+    }
+
+    .scroll-top.visible {
+      display: flex;
+    }
+
+    .recipe-count {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+      align-self: center;
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 40px 20px 36px;
+      }
+
+      .main {
+        padding: 0 16px 60px;
+      }
+
+      .recipe-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .macros {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .filters {
+        padding: 20px 0 16px;
+        gap: 8px;
+      }
+
+      .food-table {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Nutrition · Sport · Terrain</div>
+    <h1>REPAS<br><span>COMPLETS</span><br>AIO</h1>
+    <p class="hero-sub">24 recettes All-In-One pensées pour un athlète fonctionnel — muscle performant, énergie durable, perte de graisse abdominale. Rapides à préparer, conservables, transportables.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">⚡ Haute Énergie</span>
+      <span class="hero-tag">💪 Muscle Fonctionnel</span>
+      <span class="hero-tag">🔥 Recomposition Corporelle</span>
+      <span class="hero-tag">🥡 Meal Prep Friendly</span>
+      <span class="hero-tag">🌿 Propre & Équilibré</span>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterCards('all', this)">Tout voir</button>
+      <button class="filter-btn" onclick="filterCards('preprapide', this)">⚡ Prep rapide</button>
+      <button class="filter-btn" onclick="filterCards('mealprep', this)">📦 Meal prep</button>
+      <button class="filter-btn" onclick="filterCards('zerocuisson', this)">🥶 Zéro cuisson</button>
+      <button class="filter-btn" onclick="filterCards('pre', this)">🏃 Pré-effort</button>
+      <button class="filter-btn" onclick="filterCards('post', this)">💪 Post-effort</button>
+      <span class="recipe-count" id="recipeCount">24 recettes</span>
+    </div>
+
+    <div class="section-header">
+      <div class="section-label">24 Recettes</div>
+      <div class="section-title">All-In-One</div>
+    </div>
+
+    <div class="macro-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--prot)"></div>Protéines
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--gluc)"></div>Glucides
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--lip)"></div>Lipides
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--fib)"></div>Fibres
+      </div>
+      <div class="legend-item" style="margin-left:auto; font-size:11px;">▶ Clique sur "Tableau détaillé" pour voir les apports par ingrédient</div>
+    </div>
+
+    <div class="recipe-grid" id="recipeGrid">
+
+      <!-- 01 -->
+      <div class="recipe-card" data-tags="preprapide post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">01</div>
+            <div class="card-badges"><span class="badge badge-time">10 min</span><span class="badge badge-prep">24h frigo</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🌯</span>
+          <div class="card-title">Wrap Poulet Avocat Quinoa</div>
+          <div class="card-subtitle">Le classique terrain — format transportable idéal</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Blanc de poulet grillé</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Quinoa cuit</span><span class="ingr-qty">100g</span></li>
+            <li><span class="ingr-name">Avocat</span><span class="ingr-qty">½ (60g)</span></li>
+            <li><span class="ingr-name">Épinards frais</span><span class="ingr-qty">30g</span></li>
+            <li><span class="ingr-name">Tortilla complète</span><span class="ingr-qty">1 grande</span></li>
+            <li><span class="ingr-name">Yaourt grec 0% + citron + ail</span><span class="ingr-qty">2 cs</span></li>
+          </ul>
+          <div class="card-tip">✓ Enrouler, emballer dans du papier alu. Se conserve 24h au frigo.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">45g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">40g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">18g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">6g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Poulet 150g</td>
+                  <td>35g</td>
+                  <td>0g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Quinoa 100g</td>
+                  <td>4g</td>
+                  <td>21g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Avocat 60g</td>
+                  <td>1g</td>
+                  <td>3g</td>
+                  <td>9g</td>
+                </tr>
+                <tr>
+                  <td>Tortilla complète</td>
+                  <td>5g</td>
+                  <td>16g</td>
+                  <td>4g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>45g</td>
+                  <td>40g</td>
+                  <td>18g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">02</div>
+            <div class="card-badges"><span class="badge badge-time">15 min</span><span class="badge badge-prep">3 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🥗</span>
+          <div class="card-title">Bowl Saumon Riz Complet & Edamame</div>
+          <div class="card-subtitle">Oméga-3 + récupération musculaire optimale</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Pavé de saumon rôti</span><span class="ingr-qty">140g</span></li>
+            <li><span class="ingr-name">Riz complet cuit</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Edamame (cuits)</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Avocat</span><span class="ingr-qty">½ (60g)</span></li>
+            <li><span class="ingr-name">Concombre</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Sauce tamari + gingembre + citron</span><span class="ingr-qty">1 cs chacun</span></li>
+            <li><span class="ingr-name">Graines de sésame</span><span class="ingr-qty">1 cc</span></li>
+          </ul>
+          <div class="card-tip">✓ Tout en boîte hermétique. Sauce à part pour éviter que le riz absorbe tout.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">42g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">50g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">22g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">8g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Saumon 140g</td>
+                  <td>28g</td>
+                  <td>0g</td>
+                  <td>13g</td>
+                </tr>
+                <tr>
+                  <td>Riz complet 150g</td>
+                  <td>4g</td>
+                  <td>32g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Edamame 80g</td>
+                  <td>8g</td>
+                  <td>6g</td>
+                  <td>4g</td>
+                </tr>
+                <tr>
+                  <td>Avocat 60g</td>
+                  <td>1g</td>
+                  <td>3g</td>
+                  <td>9g</td>
+                </tr>
+                <tr>
+                  <td>Sésame + sauce</td>
+                  <td>1g</td>
+                  <td>1g</td>
+                  <td>2g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>42g</td>
+                  <td>50g</td>
+                  <td>22g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">03</div>
+            <div class="card-badges"><span class="badge badge-time">20 min</span><span class="badge badge-prep">Se conserve</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🌮</span>
+          <div class="card-title">Tacos Bœuf Haché Patate Douce</div>
+          <div class="card-subtitle">Le AIO parfait — fibres + protéines complètes</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Bœuf haché 5% MG</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Patate douce cuite</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Galettes de maïs</span><span class="ingr-qty">3 pièces</span></li>
+            <li><span class="ingr-name">Chou rouge râpé</span><span class="ingr-qty">60g</span></li>
+            <li><span class="ingr-name">Salsa tomate</span><span class="ingr-qty">50g</span></li>
+            <li><span class="ingr-name">Crème légère 15%</span><span class="ingr-qty">1 cs</span></li>
+            <li><span class="ingr-name">Cumin + paprika fumé</span><span class="ingr-qty">½ cc chacun</span></li>
+          </ul>
+          <div class="card-tip">✓ Garder les éléments séparés pour le transport — assembler sur place en 2 min.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">38g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">55g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">12g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">9g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Bœuf 5% 150g</td>
+                  <td>31g</td>
+                  <td>0g</td>
+                  <td>8g</td>
+                </tr>
+                <tr>
+                  <td>Patate douce 150g</td>
+                  <td>2g</td>
+                  <td>32g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Galettes maïs ×3</td>
+                  <td>3g</td>
+                  <td>18g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Chou + salsa</td>
+                  <td>2g</td>
+                  <td>5g</td>
+                  <td>0g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>38g</td>
+                  <td>55g</td>
+                  <td>12g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 -->
+      <div class="recipe-card" data-tags="zerocuisson pre">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">04</div>
+            <div class="card-badges"><span class="badge badge-time">5 min</span><span class="badge badge-prep">Zéro cuisson</span><span class="badge badge-moment">Pré-effort</span></div>
+          </div>
+          <span class="card-emoji">🫙</span>
+          <div class="card-title">Jar Overnight Oats Protéiné</div>
+          <div class="card-subtitle">Énergie progressive — parfait matin ou en-cas</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Flocons d'avoine</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Lait demi-écrémé</span><span class="ingr-qty">150ml</span></li>
+            <li><span class="ingr-name">Skyr nature</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Banane</span><span class="ingr-qty">1 petite (80g)</span></li>
+            <li><span class="ingr-name">Beurre de cacahuète</span><span class="ingr-qty">1 cs (15g)</span></li>
+            <li><span class="ingr-name">Graines de chia</span><span class="ingr-qty">10g</span></li>
+            <li><span class="ingr-name">Miel</span><span class="ingr-qty">1 cc</span></li>
+          </ul>
+          <div class="card-tip">✓ Préparer la veille au soir. Manger froid directement du pot — zéro vaisselle.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">30g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">60g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">14g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">7g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Avoine 80g</td>
+                  <td>10g</td>
+                  <td>52g</td>
+                  <td>5g</td>
+                </tr>
+                <tr>
+                  <td>Skyr 150g</td>
+                  <td>16g</td>
+                  <td>5g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Lait 150ml</td>
+                  <td>5g</td>
+                  <td>7g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Beurre cacahuète 15g</td>
+                  <td>4g</td>
+                  <td>2g</td>
+                  <td>8g</td>
+                </tr>
+                <tr>
+                  <td>Banane + chia + miel</td>
+                  <td>2g</td>
+                  <td>20g</td>
+                  <td>2g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>30g</td>
+                  <td>60g</td>
+                  <td>14g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 -->
+      <div class="recipe-card" data-tags="zerocuisson preprapide pre">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">05</div>
+            <div class="card-badges"><span class="badge badge-time">3 min</span><span class="badge badge-prep">Zéro cuisson</span><span class="badge badge-moment">Pré-effort</span></div>
+          </div>
+          <span class="card-emoji">🥙</span>
+          <div class="card-title">Pita Thon Pois Chiches Méditerranéen</div>
+          <div class="card-subtitle">3 min chrono — assemblage express sur terrain</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Thon en boîte (égoutté)</span><span class="ingr-qty">130g (1 boîte)</span></li>
+            <li><span class="ingr-name">Pois chiches en boîte</span><span class="ingr-qty">100g</span></li>
+            <li><span class="ingr-name">Pain pita complet</span><span class="ingr-qty">1 pièce (80g)</span></li>
+            <li><span class="ingr-name">Roquette</span><span class="ingr-qty">20g</span></li>
+            <li><span class="ingr-name">Tomates séchées</span><span class="ingr-qty">20g</span></li>
+            <li><span class="ingr-name">Olives noires</span><span class="ingr-qty">10 pièces</span></li>
+            <li><span class="ingr-name">Huile d'olive + citron + origan</span><span class="ingr-qty">1 cs + ½ citron</span></li>
+          </ul>
+          <div class="card-tip">✓ Thon et pois chiches non-périssables = ingrédients à garder dans le sac en permanence.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">40g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">45g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">15g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">10g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Thon 130g</td>
+                  <td>28g</td>
+                  <td>0g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Pois chiches 100g</td>
+                  <td>7g</td>
+                  <td>18g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Pita complet 80g</td>
+                  <td>5g</td>
+                  <td>40g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Olives + huile</td>
+                  <td>0g</td>
+                  <td>1g</td>
+                  <td>10g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>40g</td>
+                  <td>45g</td>
+                  <td>15g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 -->
+      <div class="recipe-card" data-tags="mealprep">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">06</div>
+            <div class="card-badges"><span class="badge badge-time">25 min</span><span class="badge badge-prep">4 jours frigo</span></div>
+          </div>
+          <span class="card-emoji">🥚</span>
+          <div class="card-title">Egg Muffins Légumes & Feta</div>
+          <div class="card-subtitle">Batch cooking — 6 muffins = 2 repas terrain</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Œufs entiers</span><span class="ingr-qty">6 pièces</span></li>
+            <li><span class="ingr-name">Feta émiettée</span><span class="ingr-qty">50g</span></li>
+            <li><span class="ingr-name">Poivron rouge</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Épinards frais</span><span class="ingr-qty">40g</span></li>
+            <li><span class="ingr-name">Champignons</span><span class="ingr-qty">60g</span></li>
+            <li><span class="ingr-name">Sel + poivre + origan</span><span class="ingr-qty">à goût</span></li>
+          </ul>
+          <div class="card-tip">✓ Four 180°C / 20 min. Mange 3 muffins avec pain complet ou seuls comme snack.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">28g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">8g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">18g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">3g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>6 œufs</td>
+                  <td>18g</td>
+                  <td>0g</td>
+                  <td>12g</td>
+                </tr>
+                <tr>
+                  <td>Feta 50g</td>
+                  <td>7g</td>
+                  <td>1g</td>
+                  <td>8g</td>
+                </tr>
+                <tr>
+                  <td>Légumes (poivron+épinards+champ.)</td>
+                  <td>3g</td>
+                  <td>6g</td>
+                  <td>0g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>28g</td>
+                  <td>8g</td>
+                  <td>18g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 07 -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">07</div>
+            <div class="card-badges"><span class="badge badge-time">20 min</span><span class="badge badge-prep">3 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🍱</span>
+          <div class="card-title">Bento Dinde Riz Noir & Brocoli</div>
+          <div class="card-subtitle">Recompo idéale — rassasiant & peu calorique</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Escalope de dinde</span><span class="ingr-qty">160g</span></li>
+            <li><span class="ingr-name">Riz noir cuit</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Brocoli vapeur</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Sauce miso blanc</span><span class="ingr-qty">1 cs</span></li>
+            <li><span class="ingr-name">Huile de sésame</span><span class="ingr-qty">1 cc</span></li>
+            <li><span class="ingr-name">Graines de courge</span><span class="ingr-qty">15g</span></li>
+            <li><span class="ingr-name">Citron</span><span class="ingr-qty">½</span></li>
+          </ul>
+          <div class="card-tip">✓ Riz noir = IG bas + antioxydants puissants. Tient 3 jours sans problème.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">44g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">42g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">10g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">8g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Dinde 160g</td>
+                  <td>36g</td>
+                  <td>0g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Riz noir 150g</td>
+                  <td>4g</td>
+                  <td>32g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Brocoli 150g</td>
+                  <td>4g</td>
+                  <td>7g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Graines courge 15g</td>
+                  <td>4g</td>
+                  <td>2g</td>
+                  <td>6g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>44g</td>
+                  <td>42g</td>
+                  <td>10g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08 -->
+      <div class="recipe-card" data-tags="preprapide mealprep">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">08</div>
+            <div class="card-badges"><span class="badge badge-time">15 min</span><span class="badge badge-prep">Chaud ou froid</span></div>
+          </div>
+          <span class="card-emoji">🥣</span>
+          <div class="card-title">Bowl Lentilles Corail Œuf Mollet</div>
+          <div class="card-subtitle">14g de fibres — arme anti-graisse abdominale</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Lentilles corail (cuites)</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Œufs mollets</span><span class="ingr-qty">2 pièces</span></li>
+            <li><span class="ingr-name">Carottes râpées</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Graines de tournesol</span><span class="ingr-qty">15g</span></li>
+            <li><span class="ingr-name">Huile d'olive</span><span class="ingr-qty">1 cs</span></li>
+            <li><span class="ingr-name">Cumin + citron</span><span class="ingr-qty">1 cc + ½ citron</span></li>
+          </ul>
+          <div class="card-tip">✓ Lentilles corail = 5 min de cuisson seulement. Idéal quand on manque de temps.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">32g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">45g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">14g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">14g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Lentilles corail 200g</td>
+                  <td>18g</td>
+                  <td>30g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>2 œufs mollets</td>
+                  <td>12g</td>
+                  <td>0g</td>
+                  <td>10g</td>
+                </tr>
+                <tr>
+                  <td>Carottes + graines</td>
+                  <td>3g</td>
+                  <td>10g</td>
+                  <td>7g</td>
+                </tr>
+                <tr>
+                  <td>Huile d'olive</td>
+                  <td>0g</td>
+                  <td>0g</td>
+                  <td>14g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>32g</td>
+                  <td>45g</td>
+                  <td>14g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 09 -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">09</div>
+            <div class="card-badges"><span class="badge badge-time">20 min</span><span class="badge badge-prep">Anti-inflam.</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🐟</span>
+          <div class="card-title">Salade Maquereaux Patate Douce & Roquette</div>
+          <div class="card-subtitle">Oméga-3 max — brûleur de graisse naturel</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Maquereau en boîte</span><span class="ingr-qty">130g</span></li>
+            <li><span class="ingr-name">Patate douce rôtie en dés</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Roquette</span><span class="ingr-qty">40g</span></li>
+            <li><span class="ingr-name">Oignon rouge</span><span class="ingr-qty">½ (40g)</span></li>
+            <li><span class="ingr-name">Câpres</span><span class="ingr-qty">1 cs</span></li>
+            <li><span class="ingr-name">Moutarde + vinaigre balsamique + huile olive</span><span class="ingr-qty">1 cc + 1 cs + 1 cs</span></li>
+          </ul>
+          <div class="card-tip">✓ Patate douce se rôtit en 20 min four 200°C. Prépares-en une fournée pour la semaine.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">36g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">38g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">20g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">6g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Maquereau 130g</td>
+                  <td>24g</td>
+                  <td>0g</td>
+                  <td>14g</td>
+                </tr>
+                <tr>
+                  <td>Patate douce 200g</td>
+                  <td>2g</td>
+                  <td>38g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Roquette + oignon</td>
+                  <td>2g</td>
+                  <td>3g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Vinaigrette</td>
+                  <td>0g</td>
+                  <td>1g</td>
+                  <td>14g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>36g</td>
+                  <td>38g</td>
+                  <td>20g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 -->
+      <div class="recipe-card" data-tags="preprapide zerocuisson pre">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">10</div>
+            <div class="card-badges"><span class="badge badge-time">10 min</span><span class="badge badge-prep">Zéro cuisson</span><span class="badge badge-moment">Pré-effort</span></div>
+          </div>
+          <span class="card-emoji">🫔</span>
+          <div class="card-title">Flatbread Houmous Poulet Grenade</div>
+          <div class="card-subtitle">Anti-ballonnements & anti-rétention d'eau</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Pain plat complet</span><span class="ingr-qty">1 pièce (80g)</span></li>
+            <li><span class="ingr-name">Houmous nature</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Poulet grillé en lanières</span><span class="ingr-qty">120g</span></li>
+            <li><span class="ingr-name">Graines de grenade</span><span class="ingr-qty">40g</span></li>
+            <li><span class="ingr-name">Menthe fraîche</span><span class="ingr-qty">quelques feuilles</span></li>
+            <li><span class="ingr-name">Zaatar (épice)</span><span class="ingr-qty">1 cc</span></li>
+          </ul>
+          <div class="card-tip">✓ La grenade = antioxydants & anti-rétention d'eau. Poulet précuit du meal prep.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">38g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">42g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">16g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">7g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Poulet 120g</td>
+                  <td>28g</td>
+                  <td>0g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Houmous 80g</td>
+                  <td>5g</td>
+                  <td>10g</td>
+                  <td>8g</td>
+                </tr>
+                <tr>
+                  <td>Pain plat 80g</td>
+                  <td>5g</td>
+                  <td>38g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Grenade + épices</td>
+                  <td>0g</td>
+                  <td>8g</td>
+                  <td>0g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>38g</td>
+                  <td>42g</td>
+                  <td>16g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11 -->
+      <div class="recipe-card" data-tags="preprapide">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">11</div>
+            <div class="card-badges"><span class="badge badge-time">15 min</span><span class="badge badge-prep">1 poêle</span></div>
+          </div>
+          <span class="card-emoji">🍳</span>
+          <div class="card-title">Skillet Œufs Patate Douce Chorizo Léger</div>
+          <div class="card-subtitle">Une seule poêle — zéro vaisselle</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Patate douce précuite en dés</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Chorizo léger</span><span class="ingr-qty">50g</span></li>
+            <li><span class="ingr-name">Œufs entiers</span><span class="ingr-qty">3 pièces</span></li>
+            <li><span class="ingr-name">Épinards frais</span><span class="ingr-qty">40g</span></li>
+            <li><span class="ingr-name">Paprika fumé</span><span class="ingr-qty">½ cc</span></li>
+          </ul>
+          <div class="card-tip">✓ Patate douce précuite au micro-ondes 5 min. Tout dans la poêle, couvercle 5 min.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">34g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">38g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">16g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">5g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>3 œufs</td>
+                  <td>18g</td>
+                  <td>0g</td>
+                  <td>12g</td>
+                </tr>
+                <tr>
+                  <td>Chorizo léger 50g</td>
+                  <td>8g</td>
+                  <td>2g</td>
+                  <td>8g</td>
+                </tr>
+                <tr>
+                  <td>Patate douce 150g</td>
+                  <td>2g</td>
+                  <td>32g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Épinards</td>
+                  <td>2g</td>
+                  <td>1g</td>
+                  <td>0g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>34g</td>
+                  <td>38g</td>
+                  <td>16g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12 -->
+      <div class="recipe-card" data-tags="preprapide pre">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">12</div>
+            <div class="card-badges"><span class="badge badge-time">10 min</span><span class="badge badge-moment">Pré-effort</span></div>
+          </div>
+          <span class="card-emoji">🌾</span>
+          <div class="card-title">Porridge Salé Flocons Avoine Œuf Poché</div>
+          <div class="card-subtitle">Énergie très progressive — longue durée</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Flocons d'avoine</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Bouillon de légumes</span><span class="ingr-qty">250ml</span></li>
+            <li><span class="ingr-name">Œufs pochés</span><span class="ingr-qty">2 pièces</span></li>
+            <li><span class="ingr-name">Parmesan râpé</span><span class="ingr-qty">20g</span></li>
+            <li><span class="ingr-name">Noix concassées</span><span class="ingr-qty">20g</span></li>
+            <li><span class="ingr-name">Herbes fraîches (ciboulette, persil)</span><span class="ingr-qty">à goût</span></li>
+          </ul>
+          <div class="card-tip">✓ Inhabituel mais addictif ! Parfait avant un effort longue durée — énergie 3h+.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">28g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">50g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">14g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">6g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Avoine 80g</td>
+                  <td>10g</td>
+                  <td>52g</td>
+                  <td>5g</td>
+                </tr>
+                <tr>
+                  <td>2 œufs pochés</td>
+                  <td>12g</td>
+                  <td>0g</td>
+                  <td>10g</td>
+                </tr>
+                <tr>
+                  <td>Parmesan 20g</td>
+                  <td>4g</td>
+                  <td>0g</td>
+                  <td>6g</td>
+                </tr>
+                <tr>
+                  <td>Noix 20g</td>
+                  <td>4g</td>
+                  <td>2g</td>
+                  <td>14g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>28g</td>
+                  <td>50g</td>
+                  <td>14g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 13 -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">13</div>
+            <div class="card-badges"><span class="badge badge-time">25 min</span><span class="badge badge-prep">3 portions</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🥩</span>
+          <div class="card-title">Steak Haché Maison Lentilles & Salsa Verte</div>
+          <div class="card-subtitle">46g de protéines — le roi de la récupération</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Bœuf haché 5% MG</span><span class="ingr-qty">160g</span></li>
+            <li><span class="ingr-name">Lentilles vertes cuites</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Persil frais</span><span class="ingr-qty">20g</span></li>
+            <li><span class="ingr-name">Câpres</span><span class="ingr-qty">1 cs</span></li>
+            <li><span class="ingr-name">Anchois</span><span class="ingr-qty">2 filets</span></li>
+            <li><span class="ingr-name">Huile d'olive + citron</span><span class="ingr-qty">1 cs + ½ citron</span></li>
+          </ul>
+          <div class="card-tip">✓ Façonner 6 steaks d'un coup et congeler crus. Décongeler la veille au frigo.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">46g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">35g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">14g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">10g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Bœuf 5% 160g</td>
+                  <td>33g</td>
+                  <td>0g</td>
+                  <td>8g</td>
+                </tr>
+                <tr>
+                  <td>Lentilles vertes 150g</td>
+                  <td>12g</td>
+                  <td>25g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Anchois 2 filets</td>
+                  <td>3g</td>
+                  <td>0g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Huile + câpres</td>
+                  <td>0g</td>
+                  <td>0g</td>
+                  <td>14g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>46g</td>
+                  <td>35g</td>
+                  <td>14g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 14 -->
+      <div class="recipe-card" data-tags="preprapide mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">14</div>
+            <div class="card-badges"><span class="badge badge-time">15 min</span><span class="badge badge-prep">Excellent froid</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🍜</span>
+          <div class="card-title">Nouilles Soba Poulet Beurre de Cacahuète</div>
+          <div class="card-subtitle">Sarrasin = IG bas — parfait le lendemain froid</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Nouilles soba (sarrasin)</span><span class="ingr-qty">80g sec</span></li>
+            <li><span class="ingr-name">Poulet émietté cuit</span><span class="ingr-qty">130g</span></li>
+            <li><span class="ingr-name">Edamame</span><span class="ingr-qty">60g</span></li>
+            <li><span class="ingr-name">Carottes julienne</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Beurre de cacahuète</span><span class="ingr-qty">20g</span></li>
+            <li><span class="ingr-name">Tamari + gingembre râpé + lime</span><span class="ingr-qty">1 cs + 1 cc + ½</span></li>
+            <li><span class="ingr-name">Graines de sésame</span><span class="ingr-qty">1 cc</span></li>
+          </ul>
+          <div class="card-tip">✓ Préparer sauce à part et mélanger au moment de manger pour garder la texture.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">40g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">48g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">18g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">7g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Poulet 130g</td>
+                  <td>30g</td>
+                  <td>0g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Soba 80g sec</td>
+                  <td>6g</td>
+                  <td>55g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Edamame 60g</td>
+                  <td>6g</td>
+                  <td>5g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Beurre cacahuète 20g</td>
+                  <td>5g</td>
+                  <td>3g</td>
+                  <td>10g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>40g</td>
+                  <td>48g</td>
+                  <td>18g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 15 -->
+      <div class="recipe-card" data-tags="zerocuisson mealprep preprapide">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">15</div>
+            <div class="card-badges"><span class="badge badge-time">5 min</span><span class="badge badge-prep">3 jours frigo</span><span class="badge badge-prep">Zéro cuisson</span></div>
+          </div>
+          <span class="card-emoji">🫙</span>
+          <div class="card-title">Jar Salade Pois Chiches Feta Tomates Séchées</div>
+          <div class="card-subtitle">Tient 3 jours — se mange partout à la fourchette</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Pois chiches en boîte</span><span class="ingr-qty">150g</span></li>
+            <li><span class="ingr-name">Feta émiettée</span><span class="ingr-qty">60g</span></li>
+            <li><span class="ingr-name">Tomates séchées</span><span class="ingr-qty">30g</span></li>
+            <li><span class="ingr-name">Concombre en dés</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Olives noires</span><span class="ingr-qty">10 pièces</span></li>
+            <li><span class="ingr-name">Huile d'olive + vinaigre de cidre + origan</span><span class="ingr-qty">1 cs + 1 cs</span></li>
+          </ul>
+          <div class="card-tip">✓ Ajouter 1 boîte de thon = +18g protéines pour atteindre 40g total. Simple upgrade.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">22g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">40g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">18g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">11g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pois chiches 150g</td>
+                  <td>10g</td>
+                  <td>28g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Feta 60g</td>
+                  <td>8g</td>
+                  <td>1g</td>
+                  <td>10g</td>
+                </tr>
+                <tr>
+                  <td>Tomates séchées 30g</td>
+                  <td>2g</td>
+                  <td>7g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Olives + huile</td>
+                  <td>0g</td>
+                  <td>2g</td>
+                  <td>12g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>22g</td>
+                  <td>40g</td>
+                  <td>18g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 16 -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">16</div>
+            <div class="card-badges"><span class="badge badge-time">30 min</span><span class="badge badge-prep">4 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🐣</span>
+          <div class="card-title">Galettes Poulet Avoine (style nuggets propres)</div>
+          <div class="card-subtitle">Finger food terrain — debout, sans couverts</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Poulet haché ou mixé</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Flocons d'avoine fins</span><span class="ingr-qty">40g</span></li>
+            <li><span class="ingr-name">Œuf entier</span><span class="ingr-qty">1 pièce</span></li>
+            <li><span class="ingr-name">Ail + herbes de Provence</span><span class="ingr-qty">1 gousse + 1 cc</span></li>
+            <li><span class="ingr-name">Sel + poivre</span><span class="ingr-qty">à goût</span></li>
+          </ul>
+          <div class="card-tip">✓ Four 200°C / 20 min (8 galettes). Se mangent froides. Parfaites sur chantier.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">42g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">22g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">10g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">2g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Poulet 200g</td>
+                  <td>44g</td>
+                  <td>0g</td>
+                  <td>4g</td>
+                </tr>
+                <tr>
+                  <td>Avoine 40g</td>
+                  <td>5g</td>
+                  <td>26g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>1 œuf</td>
+                  <td>6g</td>
+                  <td>0g</td>
+                  <td>5g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>42g</td>
+                  <td>22g</td>
+                  <td>10g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 17 NOUVEAU -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">17</div>
+            <div class="card-badges"><span class="badge badge-time">25 min</span><span class="badge badge-prep">4 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🫘</span>
+          <div class="card-title">Curry de Pois Chiches Épinards Coco Légère</div>
+          <div class="card-subtitle">Végétal complet — anti-inflammatoire puissant</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Pois chiches en boîte</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Épinards frais</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Lait de coco allégé</span><span class="ingr-qty">150ml</span></li>
+            <li><span class="ingr-name">Tomates concassées</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Riz basmati complet cuit</span><span class="ingr-qty">120g</span></li>
+            <li><span class="ingr-name">Oignon + ail + gingembre</span><span class="ingr-qty">1 + 2 gousses + 1 cc</span></li>
+            <li><span class="ingr-name">Curry + curcuma + cumin</span><span class="ingr-qty">1 cc chacun</span></li>
+          </ul>
+          <div class="card-tip">✓ Le curcuma est un anti-inflammatoire majeur — excellent pour la récup musculaire.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">22g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">58g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">10g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">14g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pois chiches 200g</td>
+                  <td>14g</td>
+                  <td>34g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Riz basmati 120g</td>
+                  <td>3g</td>
+                  <td>26g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Lait coco allégé 150ml</td>
+                  <td>1g</td>
+                  <td>3g</td>
+                  <td>8g</td>
+                </tr>
+                <tr>
+                  <td>Épinards + tomates</td>
+                  <td>4g</td>
+                  <td>8g</td>
+                  <td>0g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>22g</td>
+                  <td>58g</td>
+                  <td>10g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 18 NOUVEAU -->
+      <div class="recipe-card" data-tags="preprapide zerocuisson mealprep">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">18</div>
+            <div class="card-badges"><span class="badge badge-time">8 min</span><span class="badge badge-prep">Zéro cuisson</span><span class="badge badge-prep">3 jours frigo</span></div>
+          </div>
+          <span class="card-emoji">🥬</span>
+          <div class="card-title">Wrap Laitue Thon Avocat Quinoa</div>
+          <div class="card-subtitle">Low-carb option — léger mais rassasiant</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Grandes feuilles de laitue romaine</span><span class="ingr-qty">4 feuilles</span></li>
+            <li><span class="ingr-name">Thon en boîte (égoutté)</span><span class="ingr-qty">160g</span></li>
+            <li><span class="ingr-name">Avocat</span><span class="ingr-qty">1 entier (120g)</span></li>
+            <li><span class="ingr-name">Quinoa cuit</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Maïs doux</span><span class="ingr-qty">50g</span></li>
+            <li><span class="ingr-name">Sauce sriracha + citron vert</span><span class="ingr-qty">1 cc + ½</span></li>
+          </ul>
+          <div class="card-tip">✓ Laitue remplace la tortilla = moins de glucides. Parfait si tu vises la sèche abdominale.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">44g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">28g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">20g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">9g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Thon 160g</td>
+                  <td>36g</td>
+                  <td>0g</td>
+                  <td>2g</td>
+                </tr>
+                <tr>
+                  <td>Avocat 120g</td>
+                  <td>2g</td>
+                  <td>4g</td>
+                  <td>18g</td>
+                </tr>
+                <tr>
+                  <td>Quinoa 80g</td>
+                  <td>4g</td>
+                  <td>17g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Maïs + laitue</td>
+                  <td>2g</td>
+                  <td>10g</td>
+                  <td>0g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>44g</td>
+                  <td>28g</td>
+                  <td>20g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 19 NOUVEAU -->
+      <div class="recipe-card" data-tags="mealprep post">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">19</div>
+            <div class="card-badges"><span class="badge badge-time">30 min</span><span class="badge badge-prep">5 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🍗</span>
+          <div class="card-title">Poulet Rôti Épices Zaatar & Pois Chiches Croustillants</div>
+          <div class="card-subtitle">Batch king — une fournée = toute la semaine</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Hauts de cuisse de poulet (désossés)</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Pois chiches secs rôtis au four</span><span class="ingr-qty">100g</span></li>
+            <li><span class="ingr-name">Zaatar + paprika + ail en poudre</span><span class="ingr-qty">1 cs + 1 cc + 1 cc</span></li>
+            <li><span class="ingr-name">Huile d'olive</span><span class="ingr-qty">1 cs</span></li>
+            <li><span class="ingr-name">Riz complet cuit</span><span class="ingr-qty">120g</span></li>
+            <li><span class="ingr-name">Salade de chou (coleslaw maison)</span><span class="ingr-qty">80g</span></li>
+          </ul>
+          <div class="card-tip">✓ Pois chiches rôtis au four 200°C / 25 min = croquants même froids le lendemain.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">48g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">50g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">16g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">10g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Poulet 200g</td>
+                  <td>34g</td>
+                  <td>0g</td>
+                  <td>10g</td>
+                </tr>
+                <tr>
+                  <td>Pois chiches 100g</td>
+                  <td>9g</td>
+                  <td>22g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Riz complet 120g</td>
+                  <td>3g</td>
+                  <td>26g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Coleslaw + huile</td>
+                  <td>1g</td>
+                  <td>4g</td>
+                  <td>14g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>48g</td>
+                  <td>50g</td>
+                  <td>16g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 20 NOUVEAU -->
+      <div class="recipe-card" data-tags="preprapide zerocuisson pre">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">20</div>
+            <div class="card-badges"><span class="badge badge-time">5 min</span><span class="badge badge-prep">Zéro cuisson</span><span class="badge badge-moment">Pré-effort</span></div>
+          </div>
+          <span class="card-emoji">🫐</span>
+          <div class="card-title">Smoothie Bowl Protéiné Fruits Rouges Granola</div>
+          <div class="card-subtitle">Antioxydants max — récup et pre-training</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Skyr nature</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Fruits rouges congelés</span><span class="ingr-qty">100g</span></li>
+            <li><span class="ingr-name">Banane congelée</span><span class="ingr-qty">1 petite (80g)</span></li>
+            <li><span class="ingr-name">Granola maison (avoine + miel)</span><span class="ingr-qty">40g</span></li>
+            <li><span class="ingr-name">Graines de chia</span><span class="ingr-qty">10g</span></li>
+            <li><span class="ingr-name">Beurre d'amande</span><span class="ingr-qty">1 cs (15g)</span></li>
+          </ul>
+          <div class="card-tip">✓ Mixer skyr + fruits congelés = texture épaisse. Se mange sans cuillère si mis dans une gourde.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">28g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">56g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">14g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">9g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Skyr 200g</td>
+                  <td>20g</td>
+                  <td>8g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Fruits rouges 100g + banane 80g</td>
+                  <td>2g</td>
+                  <td>28g</td>
+                  <td>0g</td>
+                </tr>
+                <tr>
+                  <td>Granola 40g</td>
+                  <td>4g</td>
+                  <td>26g</td>
+                  <td>5g</td>
+                </tr>
+                <tr>
+                  <td>Chia 10g + beurre amande 15g</td>
+                  <td>4g</td>
+                  <td>4g</td>
+                  <td>12g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>28g</td>
+                  <td>56g</td>
+                  <td>14g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 21 NOUVEAU -->
+      <div class="recipe-card" data-tags="mealprep post preprapide">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">21</div>
+            <div class="card-badges"><span class="badge badge-time">20 min</span><span class="badge badge-prep">4 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+          </div>
+          <span class="card-emoji">🥚</span>
+          <div class="card-title">Riz Frit Œufs Légumes Style Japonais</div>
+          <div class="card-subtitle">Repas complet en une poêle — anti-gaspi</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Riz complet (cuit la veille)</span><span class="ingr-qty">200g</span></li>
+            <li><span class="ingr-name">Œufs entiers</span><span class="ingr-qty">3 pièces</span></li>
+            <li><span class="ingr-name">Carottes + petits pois + maïs</span><span class="ingr-qty">100g total</span></li>
+            <li><span class="ingr-name">Sauce soja / tamari</span><span class="ingr-qty">2 cs</span></li>
+            <li><span class="ingr-name">Huile de sésame</span><span class="ingr-qty">1 cc</span></li>
+            <li><span class="ingr-name">Gingembre + ail</span><span class="ingr-qty">1 cc + 1 gousse</span></li>
+            <li><span class="ingr-name">Edamame (optionnel)</span><span class="ingr-qty">60g</span></li>
+          </ul>
+          <div class="card-tip">✓ Utilise du riz de la veille — il frit mieux et la texture est bien meilleure.</div>
+          <div class="macros">
+            <div class="macro prot">
+              <div class="macro-value">30g</div>
+              <div class="macro-label">Prot.</div>
+            </div>
+            <div class="macro gluc">
+              <div class="macro-value">52g</div>
+              <div class="macro-label">Gluc.</div>
+            </div>
+            <div class="macro lip">
+              <div class="macro-value">12g</div>
+              <div class="macro-label">Lip.</div>
+            </div>
+            <div class="macro fib">
+              <div class="macro-value">7g</div>
+              <div class="macro-label">Fibres</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+          <div class="recap-body">
+            <table class="macro-table">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Prot.</th>
+                  <th>Gluc.</th>
+                  <th>Lip.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>3 œufs</td>
+                  <td>18g</td>
+                  <td>0g</td>
+                  <td>12g</td>
+                </tr>
+                <tr>
+                  <td>Riz complet 200g</td>
+                  <td>4g</td>
+                  <td>44g</td>
+                  <td>1g</td>
+                </tr>
+                <tr>
+                  <td>Edamame 60g</td>
+                  <td>6g</td>
+                  <td>5g</td>
+                  <td>3g</td>
+                </tr>
+                <tr>
+                  <td>Légumes + sauce</td>
+                  <td>2g</td>
+                  <td>8g</td>
+                  <td>1g</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL</td>
+                  <td>30g</td>
+                  <td>52g</td>
+                  <td>12g</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 22 NOUVEAU -->
+      <div class="recipe-card" data-tags="zerocuisson preprapide">
+        <div class="card-header">
+          <div class="card-top">
+            <div class="card-number">22</div>
+            <div class="card-badges"><span class="badge badge-time">5 min</span><span class="badge badge-prep">Zéro cuisson</span></div>
+          </div>
+          <span class="card-emoji">🧆</span>
+          <div class="card-title">Assiette Mezze Protéinée Express</div>
+          <div class="card-subtitle">Assemblage 5 min — diversité nutritionnelle maximale</div>
+        </div>
+        <div class="card-body">
+          <ul class="ingr-list">
+            <li><span class="ingr-name">Falafels (achetés ou faits)</span><span class="ingr-qty">4 pièces (120g)</span></li>
+            <li><span class="ingr-name">Houmous</span><span class="ingr-qty">60g</span></li>
+            <li><span class="ingr-name">Skyr nature (type tzatziki rapide)</span><span class="ingr-qty">80g</span></li>
+            <li><span class="ingr-name">Pain pita complet</span><span class="ingr-qty">1 pièce</span></li>
+            <li><span class="ingr-name">Tomates cerises + concombre</span><span class="ingr-qty">100g</span></li>
+            <li><span class="ingr-name">Herbes + citron</span><span class="ingr-qty">à goût</span></li>
+          </ul>
+          <div class="card-tip">✓ Falafels du commerce sont OK si < 5 ingrédients sur l'étiquette. Vérifier la liste.</div>
+              <div class="macros">
+                <div class="macro prot">
+                  <div class="macro-value">26g</div>
+                  <div class="macro-label">Prot.</div>
+                </div>
+                <div class="macro gluc">
+                  <div class="macro-value">52g</div>
+                  <div class="macro-label">Gluc.</div>
+                </div>
+                <div class="macro lip">
+                  <div class="macro-value">14g</div>
+                  <div class="macro-label">Lip.</div>
+                </div>
+                <div class="macro fib">
+                  <div class="macro-value">10g</div>
+                  <div class="macro-label">Fibres</div>
+                </div>
+              </div>
+              <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+              <div class="recap-body">
+                <table class="macro-table">
+                  <thead>
+                    <tr>
+                      <th>Ingrédient</th>
+                      <th>Prot.</th>
+                      <th>Gluc.</th>
+                      <th>Lip.</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Falafels 120g</td>
+                      <td>8g</td>
+                      <td>20g</td>
+                      <td>10g</td>
+                    </tr>
+                    <tr>
+                      <td>Houmous 60g</td>
+                      <td>4g</td>
+                      <td>8g</td>
+                      <td>6g</td>
+                    </tr>
+                    <tr>
+                      <td>Skyr 80g</td>
+                      <td>9g</td>
+                      <td>4g</td>
+                      <td>0g</td>
+                    </tr>
+                    <tr>
+                      <td>Pita complet 80g</td>
+                      <td>5g</td>
+                      <td>38g</td>
+                      <td>1g</td>
+                    </tr>
+                    <tr class="total-row">
+                      <td>TOTAL</td>
+                      <td>26g</td>
+                      <td>52g</td>
+                      <td>14g</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+          </div>
+        </div>
+
+        <!-- 23 NOUVEAU -->
+        <div class="recipe-card" data-tags="mealprep post">
+          <div class="card-header">
+            <div class="card-top">
+              <div class="card-number">23</div>
+              <div class="card-badges"><span class="badge badge-time">35 min</span><span class="badge badge-prep">5 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+            </div>
+            <span class="card-emoji">🐠</span>
+            <div class="card-title">Pavé Cabillaud Vapeur Patate Douce Épinards</div>
+            <div class="card-subtitle">Ultra lean — protéines nobles, très digeste</div>
+          </div>
+          <div class="card-body">
+            <ul class="ingr-list">
+              <li><span class="ingr-name">Filet de cabillaud</span><span class="ingr-qty">200g</span></li>
+              <li><span class="ingr-name">Patate douce</span><span class="ingr-qty">200g</span></li>
+              <li><span class="ingr-name">Épinards frais</span><span class="ingr-qty">100g</span></li>
+              <li><span class="ingr-name">Citron + aneth</span><span class="ingr-qty">1 + quelques brins</span></li>
+              <li><span class="ingr-name">Huile d'olive</span><span class="ingr-qty">1 cs</span></li>
+              <li><span class="ingr-name">Fleur de sel + poivre</span><span class="ingr-qty">à goût</span></li>
+            </ul>
+            <div class="card-tip">✓ Cuisson vapeur = protéines maximalement préservées. Très digeste avant / après sport.</div>
+            <div class="macros">
+              <div class="macro prot">
+                <div class="macro-value">42g</div>
+                <div class="macro-label">Prot.</div>
+              </div>
+              <div class="macro gluc">
+                <div class="macro-value">40g</div>
+                <div class="macro-label">Gluc.</div>
+              </div>
+              <div class="macro lip">
+                <div class="macro-value">12g</div>
+                <div class="macro-label">Lip.</div>
+              </div>
+              <div class="macro fib">
+                <div class="macro-value">7g</div>
+                <div class="macro-label">Fibres</div>
+              </div>
+            </div>
+            <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+            <div class="recap-body">
+              <table class="macro-table">
+                <thead>
+                  <tr>
+                    <th>Ingrédient</th>
+                    <th>Prot.</th>
+                    <th>Gluc.</th>
+                    <th>Lip.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Cabillaud 200g</td>
+                    <td>38g</td>
+                    <td>0g</td>
+                    <td>2g</td>
+                  </tr>
+                  <tr>
+                    <td>Patate douce 200g</td>
+                    <td>2g</td>
+                    <td>42g</td>
+                    <td>0g</td>
+                  </tr>
+                  <tr>
+                    <td>Épinards 100g</td>
+                    <td>3g</td>
+                    <td>3g</td>
+                    <td>0g</td>
+                  </tr>
+                  <tr>
+                    <td>Huile d'olive 1cs</td>
+                    <td>0g</td>
+                    <td>0g</td>
+                    <td>14g</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td>42g</td>
+                    <td>40g</td>
+                    <td>12g</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 24 NOUVEAU -->
+        <div class="recipe-card" data-tags="preprapide mealprep post">
+          <div class="card-header">
+            <div class="card-top">
+              <div class="card-number">24</div>
+              <div class="card-badges"><span class="badge badge-time">20 min</span><span class="badge badge-prep">3 jours frigo</span><span class="badge badge-moment">Post-effort</span></div>
+            </div>
+            <span class="card-emoji">🌿</span>
+            <div class="card-title">Quinoa Bowl Edamame Avocat Graines Mix</div>
+            <div class="card-subtitle">Végétal complet — tous les acides aminés essentiels</div>
+          </div>
+          <div class="card-body">
+            <ul class="ingr-list">
+              <li><span class="ingr-name">Quinoa cuit</span><span class="ingr-qty">150g</span></li>
+              <li><span class="ingr-name">Edamame cuits</span><span class="ingr-qty">100g</span></li>
+              <li><span class="ingr-name">Avocat</span><span class="ingr-qty">1 entier (120g)</span></li>
+              <li><span class="ingr-name">Graines mix (tournesol, courge, sésame)</span><span class="ingr-qty">20g</span></li>
+              <li><span class="ingr-name">Épinards + roquette</span><span class="ingr-qty">60g</span></li>
+              <li><span class="ingr-name">Sauce tahini + citron + ail + eau</span><span class="ingr-qty">2 cs tahini + ½ citron</span></li>
+            </ul>
+            <div class="card-tip">✓ Quinoa = protéine complète (tous les acides aminés). Rare pour une source végétale.</div>
+            <div class="macros">
+              <div class="macro prot">
+                <div class="macro-value">28g</div>
+                <div class="macro-label">Prot.</div>
+              </div>
+              <div class="macro gluc">
+                <div class="macro-value">44g</div>
+                <div class="macro-label">Gluc.</div>
+              </div>
+              <div class="macro lip">
+                <div class="macro-value">26g</div>
+                <div class="macro-label">Lip.</div>
+              </div>
+              <div class="macro fib">
+                <div class="macro-value">13g</div>
+                <div class="macro-label">Fibres</div>
+              </div>
+            </div>
+            <button class="recap-toggle" onclick="toggleRecap(this)"><span class="arrow">▶</span> Tableau détaillé</button>
+            <div class="recap-body">
+              <table class="macro-table">
+                <thead>
+                  <tr>
+                    <th>Ingrédient</th>
+                    <th>Prot.</th>
+                    <th>Gluc.</th>
+                    <th>Lip.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Quinoa 150g</td>
+                    <td>8g</td>
+                    <td>30g</td>
+                    <td>3g</td>
+                  </tr>
+                  <tr>
+                    <td>Edamame 100g</td>
+                    <td>11g</td>
+                    <td>8g</td>
+                    <td>5g</td>
+                  </tr>
+                  <tr>
+                    <td>Avocat 120g</td>
+                    <td>2g</td>
+                    <td>6g</td>
+                    <td>18g</td>
+                  </tr>
+                  <tr>
+                    <td>Tahini 2cs + graines 20g</td>
+                    <td>8g</td>
+                    <td>4g</td>
+                    <td>20g</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td>28g</td>
+                    <td>44g</td>
+                    <td>26g</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CONSEILS -->
+      <div class="section-header">
+        <div class="section-label">Pratique & Terrain</div>
+        <div class="section-title">Conseils Clés</div>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <span class="tip-icon">🧊</span>
+          <div class="tip-title">Batch Cooking Express du Dimanche</div>
+          <div class="tip-text">Cuis juste <strong>3 choses</strong> : une protéine (poulet, bœuf, œufs durs), une céréale (riz, quinoa, lentilles), un légume rôti. Combine-les différemment toute la semaine → pas de routine, zéro stress, zéro plan rigide.</div>
+          <span class="tip-highlight">≈ 45 min le dimanche = 5 jours réglés</span>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon">⏱️</span>
+          <div class="tip-title">La Règle des 3 Ingrédients Minimum</div>
+          <div class="tip-text">Même pressé, vise toujours : <strong>1 protéine + 1 glucide complexe + 1 légume</strong>. Même un sandwich thon/pain complet/tomate c'est déjà solide. L'important c'est de ne pas sauter le repas.</div>
+          <span class="tip-highlight">Simple à retenir, difficile à rater</span>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon">🎯</span>
+          <div class="tip-title">Ton Vrai Ennemi : Le Déficit Accidentel</div>
+          <div class="tip-text">À 60kg avec activité physique, tu brûles facilement <strong>2400-2600 kcal/jour</strong>. Si tu manges mal ou pas assez en journée → ton corps tape dans le muscle, pas la graisse. <strong>Manger bien et suffisamment est prioritaire.</strong></div>
+          <span class="tip-highlight">⚠️ Sous-manger = perdre du muscle</span>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon">🥤</span>
+          <div class="tip-title">Collation Terrain en 30 Secondes</div>
+          <div class="tip-text"><strong>Skyr nature + banane + poignée d'amandes</strong> → 25g de protéines, tient 4h, zéro préparation, tout tient dans un sac. À avoir toujours avec soi pour éviter les écarts ou le coup de fatigue de l'après-midi.</div>
+          <span class="tip-highlight">25g prot · transport facile</span>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon">💧</span>
+          <div class="tip-title">Hydratation Souvent Négligée en Extérieur</div>
+          <div class="tip-text">La <strong>rétention abdominale</strong> est souvent liée à un manque d'eau + excès de sel. En travaillant dehors avec de la transpiration, vise <strong>2,5L/jour minimum</strong>. L'eau aide aussi la synthèse protéique.</div>
+          <span class="tip-highlight">2.5L/jour minimum si tu transpires</span>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon">⚡</span>
+          <div class="tip-title">Timing Autour de l'Entraînement</div>
+          <div class="tip-text"><strong>Avant effort :</strong> glucides + protéines légères (Jar oats, Pita thon, Flatbread). <strong>Après effort :</strong> charge en protéines + glucides de récup (Bowl saumon, Tacos bœuf, Steak haché). La fenêtre post-training idéale est dans les 90 min.</div>
+          <span class="tip-highlight">Timing = 20% du résultat</span>
+        </div>
+      </div>
+
+      <!-- TABLE ALIMENTS -->
+      <div class="section-header">
+        <div class="section-label">Guide Alimentaire</div>
+        <div class="section-title">Quoi Privilégier</div>
+      </div>
+      <table class="food-table">
+        <thead>
+          <tr>
+            <th>Catégorie</th>
+            <th class="fav">✅ À privilégier</th>
+            <th class="avoid">⚠️ À limiter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="3" class="cat-label">GLUCIDES</td>
+          </tr>
+          <tr>
+            <td>Sources d'énergie</td>
+            <td class="fav">Patate douce, riz noir/complet, lentilles, flocons d'avoine, quinoa, pois chiches, soba</td>
+            <td class="avoid">Pain blanc, pâtes classiques, riz blanc, viennoiseries</td>
+          </tr>
+          <tr>
+            <td colspan="3" class="cat-label">PROTÉINES</td>
+          </tr>
+          <tr>
+            <td>Construction musculaire</td>
+            <td class="fav">Thon, maquereau, saumon, cabillaud, dinde, poulet, bœuf 5%, œufs, skyr, edamame</td>
+            <td class="avoid">Charcuterie transformée, fromages gras, nuggets industriels</td>
+          </tr>
+          <tr>
+            <td colspan="3" class="cat-label">LIPIDES</td>
+          </tr>
+          <tr>
+            <td>Graisses de qualité</td>
+            <td class="fav">Avocat, amandes, noix, beurre de cacahuète, tahini, huile d'olive, graines (sésame, chia, courge)</td>
+            <td class="avoid">Fritures, sauces industrielles, margarine, huile de palme</td>
+          </tr>
+        </tbody>
+      </table>
+
+      </>
+
+      <footer>
+        Healthy AIO · 24 recettes · Nutrition fonctionnelle sport & terrain · Fait avec <span>♥</span>
+      </footer>
+
+      <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+      <script>
+        function filterCards(tag, btn) {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          let count = 0;
+          document.querySelectorAll('.recipe-card').forEach(card => {
+            if (tag === 'all') {
+              card.classList.remove('hidden');
+              count++;
+            } else {
+              const tags = card.dataset.tags || '';
+              if (tags.includes(tag)) {
+                card.classList.remove('hidden');
+                count++;
+              } else {
+                card.classList.add('hidden');
+              }
+            }
+          });
+          document.getElementById('recipeCount').textContent = count + ' recette' + (count > 1 ? 's' : '');
+        }
+
+        function toggleRecap(btn) {
+          btn.classList.toggle('open');
+          const body = btn.nextElementSibling;
+          body.classList.toggle('open');
+        }
+        window.addEventListener('scroll', () => {
+          const b = document.getElementById('scrollTop');
+          b.classList.toggle('visible', window.scrollY > 400);
+        });
+      </script>
+</body>
+
+</html>
