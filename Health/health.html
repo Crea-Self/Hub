@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santé Globale & Vieillissement en Bonne Santé</title>
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #190f2a;
+            --text-muted: #47694c;
+            --primary: #c44c07;
+            --primary-light: #e0f2fe;
+            --accent: #eab308;
+            --border: #cbd5e1;
+            --success: #15803d;
+            --success-light: #dcfce7;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--border);
+            position: relative;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 2.2em;
+        }
+
+        .version-badge {
+            background-color: #c70202;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.95em;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tabs System */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Content Blocks */
+        .section-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+            margin-bottom: 35px;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 12px;
+            font-size: 1.5em;
+        }
+
+        /* Responsive Tables */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95em;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-main);
+            padding: 14px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .stars {
+            color: var(--accent);
+            letter-spacing: 2px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* Bullet lists styling */
+        .reading-list,
+        .security-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .reading-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 14px;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .reading-list li::before {
+            content: "🔹";
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        .security-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 16px;
+            font-size: 1.02em;
+        }
+
+        .security-list li::before {
+            content: "⚠️";
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        /* Badges styling */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
+        .badge-high {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-very-high {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Santé Globale & Vieillissement en Bonne Santé</h1>
+            <span class="version-badge">Version v1.5</span>
+        </header>
+
+        <!-- Navigation / Filtres Dynamiques -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('all')">Tout afficher</button>
+            <button class="tab-btn" onclick="showSection('sec1')">1) Fondations</button>
+            <button class="tab-btn" onclick="showSection('sec2')">2) En priorité</button>
+            <button class="tab-btn" onclick="showSection('sec3')">3) Base Nutritionnelle</button>
+            <button class="tab-btn" onclick="showSection('sec4')">4) Focus Multivitamines</button>
+            <button class="tab-btn" onclick="showSection('sec5')">5) Optimisation Ciblée</button>
+            <button class="tab-btn" onclick="showSection('sec6')">6) Adaptogènes & Plantes</button>
+            <button class="tab-btn" onclick="showSection('sec7')">7) Recherche & Futur</button>
+            <button class="tab-btn" onclick="showSection('sec8')">8) Règles de Sécurité</button>
+        </div>
+
+        <!-- Section 1 -->
+        <div id="sec1" class="section-content active">
+            <h2>1) Fondations non négociables</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Élément</th>
+                            <th>Santé générale</th>
+                            <th>Performance / Énergie</th>
+                            <th>Bien-être</th>
+                            <th>Vieillissement sain</th>
+                            <th>Priorité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Musculation / Résistance</strong></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cardio (endurance + intensité)</strong></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sommeil régulier et suffisant</strong></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alimentation de type méditerranéen (brute)</strong></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Protéines suffisantes / poudres si besoin</strong></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fibres / microbiote intestinal</strong></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maintien d’une faible graisse viscérale</strong></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gestion du stress & Cortisol</strong></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Relations sociales & Stimulation intellectuelle</strong></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Limiter alcool, tabac et exposition solaire excessive</strong></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="badge badge-very-high">Très haute</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div id="sec2" class="section-content active">
+            <h2>2) En priorité</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Élément</th>
+                            <th>Objectif principal</th>
+                            <th>Santé gén.</th>
+                            <th>Perf.</th>
+                            <th>Bien-être</th>
+                            <th>Vieil. sain</th>
+                            <th>Statut / Remarque</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Créatine</strong></td>
+                            <td>Force, volume musculaire, cognition</td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★★★★</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td>✅ Pertinent ; 3–5 g/j en continu</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Collagène</strong></td>
+                            <td>Tendons, cartilage, élasticité peau & ongles</td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td>✅ Pertinent (10g/j) ; une prise conjointe avec Vitamine C optimise la synthèse</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div id="sec3" class="section-content active">
+            <h2>3) Base nutritionnelle à envisager (selon alimentation ou bilan)</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Élément</th>
+                            <th>Objectif principal</th>
+                            <th>Santé gén.</th>
+                            <th>Perf.</th>
+                            <th>Bien-être</th>
+                            <th>Vieil. sain</th>
+                            <th>Statut / Décision scientifique</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Vitamine D3</strong></td>
+                            <td>Fixation osseuse, immunité innée, force musculaire</td>
+                            <td>★★★★☆ <small>(si insuf.)</small></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>★★★★☆ <small>(si insuf.)</small></td>
+                            <td>À calibrer selon le dosage sérique (25-OH-D3)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Glutamine</strong></td>
+                            <td>Intégrité de la barrière intestinale & récupération ciblée</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td>Optionnelle ; grand intérêt si sensibilité digestive ou forte intensité</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vitamine K2</strong></td>
+                            <td>Activation ostéocalcine (carboxylation), évite calcification artérielle</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Synergie obligatoire si supplémentation forte en D3</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Calcium</strong></td>
+                            <td>Minéralisation osseuse, transmission nerveuse & contraction</td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td>Mieux via alimentation (laitages, eaux magnésiennes, amandes). Prudence en isolée.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Oméga-3 (EPA/DHA) & ratios 6, 9</strong></td>
+                            <td>Baisse de l'inflammation systémique, fluidité membranaire, cœur & cerveau</td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td>Prioritaire. Les oméga 6 & 9 sont déjà largement surreprésentés dans l'alimentation.
+                                Focus sur 3.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Magnésium</strong></td>
+                            <td>Relaxation neuro-musculaire, cycle de l'ATP, réduction de la fatigue</td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Carence très fréquente. Privilégier les formes chélatées (bisglycinate, citrate).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Zinc</strong></td>
+                            <td>Soutien de la fonction immunitaire, synthèse d'ADN, enzymatique</td>
+                            <td>★★★☆☆ <small>(si déf.)</small></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td>Utile si déficit. Ne pas dépasser 15-25 mg/j au long cours (risque de baisse du cuivre).
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vitamine B12 (Cobalamine)</strong></td>
+                            <td>Formation des globules rouges, gaine de myéline (système nerveux)</td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td>Cruciale pour les alimentations végétales/flexitariennes ou baisse d'acidité gastrique.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vitamine B9 (Acide Folique)</strong></td>
+                            <td>Synthèse d'ADN, division cellulaire, méthylation</td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Privilégier la forme active (Méthylfolate / Quatrefolic®) pour contourner les mutations
+                                MTHFR.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vitamine B6 (Pyridoxine)</strong></td>
+                            <td>Cofacteur des neurotransmetteurs (sérotonine, dopamine), régulation de l'humeur</td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Forme P5P préférable. Éviter les surdosages (neuropathies réversibles).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Biotine (Vitamine B7/B8)</strong></td>
+                            <td>Métabolisme énergétique (acides gras, aminés), santé cheveux & ongles</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Souvent synthétisée par le microbiote. Utile en cure esthétique/phanères.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vitamine C</strong></td>
+                            <td>Antioxydant majeur, synthèse du collagène, immunomodulation</td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Une alimentation riche en fruits/légumes frais couvre les besoins physiologiques.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vitamine A / E</strong></td>
+                            <td>Vision (rétinol), intégrité cutanée, antioxydant lipophile</td>
+                            <td>★★☆☆☆ <small>(si carence)</small></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td>Pas de supplémentation isolée à forte dose sans avis médical (stockage hépatique).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 4 -->
+        <div id="sec4" class="section-content active">
+            <h2>4) Focus Multivitamines — Analyse des dosages de sécurité</h2>
+            <p>Le recours à un multivitamines de haute qualité permet de couvrir de nombreux éléments listés. Voici
+                l'interprétation des synergies issues de tes données :</p>
+            <ul class="reading-list">
+                <li><strong>D3 (1 000 UI) + K2 (80 µg) :</strong> Excellente micro-dose d'entretien, idéale pour
+                    maintenir un statut stable, mais insuffisante pour corriger une carence majeure profonde.</li>
+                <li><strong>Magnésium (150 mg) :</strong> Apport de sécurité utile (souvent sous forme de citrate ou de
+                    bisglycinate) mais nécessite d'être complété si tu as une activité sportive intense.</li>
+                <li><strong>Zinc (10 mg) + Sélénium (30 µg) :</strong> Doses physiologiques parfaites et protectrices.
+                    Attention aux doublons si tu ajoutes un supplément "Zinc" isolé.</li>
+                <li><strong>B6 (P5P), B9 (Quatrefolic®), B12 (Méthylcobalamine) :</strong> Les formes coenzymées
+                    (actives) intégrées ici sont haut de gamme, idéales pour l'assimilation cellulaire directe.</li>
+                <li><strong>Biotine (51 µg) :</strong> Couvre 100% des apports journaliers recommandés sans saturer les
+                    récepteurs.</li>
+                <li><strong>NAC (180 mg) + CoQ10 (30 mg) :</strong> Présence sous forme de "traces actives" (bonus
+                    antioxydant mitochondrial), mais trop faible pour un effet thérapeutique direct.</li>
+                <li><strong>Complexes végétaux (Quercétine, Rutine, Hespéridine, Lutéine, Lycopène, Inositol) :</strong>
+                    Agissent en synergie pour mimer les polyphénols de l'alimentation protectrice.</li>
+            </ul>
+        </div>
+
+        <!-- Section 5 -->
+        <div id="sec5" class="section-content active">
+            <h2>5) Optimisation : preuves intermédiaires ou objectifs ciblés</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Élément</th>
+                            <th>Objectif principal</th>
+                            <th>Santé gén.</th>
+                            <th>Perf.</th>
+                            <th>Bien-être</th>
+                            <th>Vieil. sain</th>
+                            <th>Place actuelle & Dose utile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Glycine / Acides Aminés</strong></td>
+                            <td>Sommeil profond (baisse T° centrale), synthèse endogène du glutathion</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Optionnelle et très sûre. 3g à 5g avant le coucher.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BCAA / Acides Aminés essentiels</strong></td>
+                            <td>Anabolisme musculaire, lutte contre la sarcopénie, réduction de la fatigue</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td>Redondant si l'apport total en protéines de haute valeur biologique est suffisant.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Probiotiques</strong></td>
+                            <td>Ensemencement de souches microbiotiques vivantes, immunité & axe intestin-cerveau</td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td>Pertinent après une antibiothérapie ou en cas de dysbiose. Privilégier la variété des
+                                souches.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NAC (N-Acétyl-Cystéine)</strong></td>
+                            <td>Précurseur direct du glutathion (antioxydant maître intracellulaire), détox hépatique
+                            </td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>À utiliser de manière cyclique. Prudence au long cours sans fenêtres thérapeutiques.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CoQ10 (Ubiquinone/Ubiquinol)</strong></td>
+                            <td>Respiration cellulaire (chaîne mitochondriale), cardioprotecteur</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>De plus en plus pertinent après 40 ans ou en cas d'usage de statines (baisse endogène).
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>L-carnitine</strong></td>
+                            <td>Transport des acides gras dans la mitochondrie (bêta-oxydation), énergie musculaire</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Intéressante en pré-workout pour l'oxydation des graisses et l'endurance
+                                cardiovasculaire.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HMB</strong></td>
+                            <td>Métabolite de la leucine, anti-catabolique puissant, préservation de la masse maigre
+                            </td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td>Très utile en période de déficit calorique (sèche) ou pour contrer la fonte musculaire
+                                liée à l'âge.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Taurine</strong></td>
+                            <td>Stabilisateur de membrane, homéostasie calcique, influx nerveux</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Prometteuse (études longévité animales), statut humain non prioritaire.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quercétine</strong></td>
+                            <td>Polyphénol flavonoïde, effet potentiel sur la sénescence cellulaire</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Biodisponibilité faible de base ; mieux absorbée en complexe (phytosome).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spermidine</strong></td>
+                            <td>Inducteur naturel de l'autophagie (nettoyage cellulaire)</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Données mécanistiques puissantes, preuves cliniques robustes encore attendues.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NMN / NR</strong></td>
+                            <td>Précurseurs du NAD+ pour contrer le déclin énergétique cellulaire</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Molécules d'avenir à forte visibilité, mais recul humain encore modéré.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 6 -->
+        <div id="sec6" class="section-content active">
+            <h2>6) Stress, fatigue, sommeil, libido : adaptogènes et plantes</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Élément</th>
+                            <th>Objectif principal documenté</th>
+                            <th>Santé gén.</th>
+                            <th>Perf.</th>
+                            <th>Bien-être</th>
+                            <th>Vieil. sain</th>
+                            <th>Maturité / Vigilances</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Ashwagandha (KSM-66)</strong></td>
+                            <td>Régulation de l'axe HHS (baisse du cortisol), anxiolytique, sommeil</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td>Efficace à court/moyen terme. Faire des pauses. Prudence (foie, thyroïde).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rhodiola Rosea</strong></td>
+                            <td>Résistance à l'épuisement cognitif/burnout, adaptogène stimulant</td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td>Excellente prise matinale en période de surcharge de travail ou de fatigue nerveuse.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Curcuma (Curcumine)</strong></td>
+                            <td>Anti-inflammatoire systémique puissant, inhibition des voies NF-kB, confort articulaire
+                            </td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★★★☆</span></td>
+                            <td>Hautement protecteur. Choisir une forme optimisée (Meriva, Novasol) pour l'assimilation
+                                intestinale.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shilajit</strong></td>
+                            <td>Complexe organo-minéral (acide fulvique), boost énergétique, soutien de la testostérone
+                            </td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Utilisé en médecine ayurvédique pour la vitalité globale. Pureté du produit essentielle.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maca</strong></td>
+                            <td>Régulation de la libido perçue, énergie subjective sans impact hormonal direct</td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★★☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td>Effet tonifiant aphrodisiaque validé par le ressenti utilisateur, non hormonal.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spiruline</strong></td>
+                            <td>Super-aliment dense, micronutriments, phycocyanine (immunité)</td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td>Excellent soutien nutritionnel global. Qualité de la culture surveillée.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chlorella</strong></td>
+                            <td>Algue riche en chlorophylle, chélation des métaux lourds, détoxification intestinale
+                            </td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★☆☆☆☆</span></td>
+                            <td><span class="stars">★★☆☆☆</span></td>
+                            <td>Action complémentaire pour l'élimination des toxines environnementales.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 7 -->
+        <div id="sec7" class="section-content active">
+            <h2>7) Recherche à surveiller, mais pas à s’auto-prescrire</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Piste Longévité</th>
+                            <th>Statut scientifique actuel & risques associés</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Rapamycine</strong></td>
+                            <td>Inhibiteur de la voie mTOR. Très robuste sur les modèles animaux pour allonger la durée
+                                de vie. Chez l'humain sain : risques d'immunodépression, de dyslipidémie et d'aphtes
+                                buccaux. Hors protocole médical validé.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sénolytiques (Dasatinib + Quercétine, Fisétine)</strong></td>
+                            <td>Molécules visant la destruction sélective des cellules sénescentes "vampires". Essais
+                                cliniques humains en cours, aucun protocole de prévention grand public sécurisé à ce
+                                jour.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reprogrammation Épigénétique (Facteurs de Yamanaka)</strong></td>
+                            <td>Inversion théorique de l'horloge biologique cellulaire. Recherches majeures en
+                                laboratoire, encore loin d'une application systémique sécurisée (risque oncologique non
+                                maîtrisé).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Thérapies géniques / cellulaires</strong></td>
+                            <td>Recherche avancée dans certains traitements de pathologies, absolument pas une stratégie
+                                préventive disponible aujourd’hui.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 8 -->
+        <div id="sec8" class="section-content active">
+            <h2>8) Règles de sécurité fondamentales du protocole</h2>
+            <ul class="security-list">
+                <li><strong>Biologie médicale d'abord :</strong> Ne pas deviner ses carences. Réaliser des analyses
+                    ciblées (Vitamine D3, Ferritine, B12/B9, Bilan lipidique complet, HbA1c, Fonction rénale) avant de
+                    supplémenter massivement.</li>
+                <li><strong>Règle de l'introduction unique :</strong> On n'ajoute qu'un seul nouveau composant à la
+                    fois. On maintient la prise pendant 3 à 4 semaines pour évaluer la tolérance digestive, nerveuse et
+                    les bénéfices subjectifs.</li>
+                <li><strong>Gestion stricte des doublons (Effet Multivitamines) :</strong> Tout multivitamines contient
+                    déjà un cocktail de compléments. Tout ajout de ces molécules en isolé doit être calculé en cumul
+                    cumulatif pour
+                    éviter la toxicité.</li>
+                <li><strong>Principe de primauté :</strong> Aucun actif ou plante ne compensera les effets délétères
+                    d'un manque de sommeil, d'une sédentarité musculaire ou d'une alimentation ultra-transformée.</li>
+                <li><strong>Principe de précaution :</strong> En cas de traitement chronique concurrent ou de symptômes
+                    inexpliqués, le feu vert d'un médecin ou d'un pharmacien est obligatoire avant toute prise
+                    d'adaptogènes ou de molécules concentrées.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const clickedBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(sectionId));
+            if (clickedBtn) clickedBtn.classList.add('active');
+
+            const sections = document.querySelectorAll('.section-content');
+            sections.forEach(sec => {
+                if (sectionId === 'all') {
+                    sec.classList.add('active');
+                } else {
+                    if (sec.id === sectionId) {
+                        sec.classList.add('active');
+                    } else {
+                        sec.classList.remove('active');
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
