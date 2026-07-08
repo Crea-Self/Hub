@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Carte Cosmique Interactive 🌌 Quiz & Galaxie Animée</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* === Reset & base === */
+    * {
+      box-sizing: border-box;
+    }
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #1a1a2e 0%, #0f2027 100%);
+      color: #f0f0f0;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* === Canvas étoiles (fond dynamique) === */
+    #stars-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    /* === Éléments UI Fixes === */
+    .sound-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: white;
+      font-size: 1.3rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1002;
+      user-select: none;
+      transition: background 0.3s ease;
+    }
+
+    .sound-toggle:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .score-board {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 210, 255, 0.15);
+      border: 2px solid #00d2ff;
+      backdrop-filter: blur(5px);
+      color: #00d2ff;
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      z-index: 1002;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+    }
+
+    /* === Header === */
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      position: relative;
+      z-index: 10;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: #00d2ff;
+      margin-bottom: 0.1rem;
+    }
+
+    header p {
+      font-size: 1.15rem;
+      color: #ccc;
+      margin-top: 0;
+    }
+
+    /* === Conteneur galaxie === */
+    .galaxy-container {
+      position: relative;
+      width: 90vw;
+      max-width: 1000px;
+      height: 600px;
+      margin: 2rem auto 3rem;
+      user-select: none;
+      z-index: 10;
+    }
+
+    /* === Planètes (thèmes) === */
+    .planet {
+      position: absolute;
+      width: 125px;
+      height: 125px;
+      background: radial-gradient(circle at center, #004466, #001b33);
+      border: 3px solid #00d2ff;
+      border-radius: 50%;
+      box-shadow: 0 0 15px 3px #00d2ff, inset 0 0 15px #00aaff;
+      color: #00d2ff;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.5s ease;
+      text-align: center;
+      padding: 0.5rem;
+      user-select: none;
+      animation: orbitAnimation 20s infinite linear;
+    }
+
+    .planet:hover,
+    .planet:focus-visible {
+      outline: none;
+      transform: scale(1.15) !important;
+      box-shadow: 0 0 25px 5px #00ffff, inset 0 0 20px #00ccff;
+      color: #00ffff;
+    }
+
+    .planet.completed {
+      border-color: #ffd700;
+      color: #ffd700;
+      box-shadow: 0 0 20px 4px #ffd700, inset 0 0 15px #b8860b;
+    }
+
+    .planet .emoji {
+      font-size: 2rem;
+      margin-bottom: 0.2rem;
+      user-select: none;
+    }
+
+    .planet .label {
+      font-size: 0.85rem;
+      line-height: 1.2;
+      user-select: none;
+      white-space: normal;
+      max-width: 100%;
+    }
+
+    /* === Modal === */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1005;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1e2a38;
+      padding: 2rem 2rem 3rem;
+      border-radius: 10px;
+      max-width: 700px;
+      width: 100%;
+      color: #f1f1f1;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+      position: relative;
+      text-align: center;
+      animation: fadeIn 0.4s ease forwards;
+      user-select: text;
+    }
+
+    .modal-content img {
+      max-width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+      color: #00d2ff;
+    }
+
+    .modal-content p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ff5f5f;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #ff1f1f;
+    }
+
+    /* === Navigation dans modal === */
+    .modal-nav {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .nav-btn {
+      background: #00d2ff;
+      color: #012a43;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+
+    .nav-btn:disabled {
+      background: #006d90;
+      cursor: not-allowed;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: #00b8ff;
+    }
+
+    /* === Quiz === */
+    .quiz-container {
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .quiz-question {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-options {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    .quiz-options li {
+      margin-bottom: 0.7rem;
+    }
+
+    .quiz-options label {
+      cursor: pointer;
+      font-size: 1rem;
+      user-select: none;
+    }
+
+    .quiz-btn {
+      background: #00d2ff;
+      color: #012a43;
+      border: none;
+      padding: 0.5rem 1.3rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+
+    .quiz-btn:hover:not(:disabled) {
+      background: #00b8ff;
+    }
+
+    .quiz-btn:disabled {
+      background: #006d90;
+      cursor: not-allowed;
+    }
+
+    .quiz-result {
+      margin-top: 1rem;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #00ffcc;
+      user-select: text;
+    }
+
+    /* === Animations === */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes orbitAnimation {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      25% {
+        transform: translate(5px, -5px) rotate(1deg);
+      }
+
+      50% {
+        transform: translate(0, -10px) rotate(0deg);
+      }
+
+      75% {
+        transform: translate(-5px, -5px) rotate(-1deg);
+      }
+
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+    }
+
+    /* === Responsive === */
+    @media (max-width: 800px) {
+      .galaxy-container {
+        height: 500px;
+      }
+
+      .planet {
+        width: 105px;
+        height: 105px;
+      }
+
+      .planet .emoji {
+        font-size: 1.6rem;
+      }
+
+      .planet .label {
+        font-size: 0.75rem;
+      }
+
+      header h1 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .galaxy-container {
+        height: 450px;
+        width: 95vw;
+      }
+
+      .planet {
+        width: 90px;
+        height: 90px;
+      }
+
+      .planet .emoji {
+        font-size: 1.4rem;
+      }
+
+      .planet .label {
+        font-size: 0.7rem;
+      }
+
+      header h1 {
+        font-size: 1.6rem;
+      }
+    }
+
+    /* === Positions carte globale === */
+    #planet-fractals {
+      top: 8%;
+      left: 6%;
+      animation-duration: 14s;
+    }
+
+    #planet-multivers {
+      top: 5%;
+      left: 40%;
+      animation-duration: 15s;
+    }
+
+    #planet-quantique {
+      top: 8%;
+      left: 74%;
+      animation-duration: 18s;
+    }
+
+    #planet-cordes {
+      top: 38%;
+      left: 12%;
+      animation-duration: 16s;
+    }
+
+    #planet-voyage-temps {
+      top: 38%;
+      left: 42%;
+      animation-duration: 17s;
+    }
+
+    #planet-philo {
+      top: 38%;
+      left: 70%;
+      animation-duration: 20s;
+    }
+
+    #planet-simulation {
+      top: 65%;
+      left: 80%;
+      animation-duration: 22s;
+    }
+
+    #planet-infini {
+      top: 72%;
+      left: 6%;
+      animation-duration: 19s;
+    }
+
+    #planet-trousnoirs {
+      top: 75%;
+      left: 32%;
+      animation-duration: 13s;
+    }
+
+    #planet-matiere-noire {
+      top: 72%;
+      left: 58%;
+      animation-duration: 21s;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="sound-toggle" onclick="toggleSound()" aria-label="Toggle sound">🔊 Son</button>
+  <div class="score-board">Cosmos Score : <span id="global-score">0</span></div>
+
+  <header>
+    <h1>Carte Cosmique Interactive 🌌</h1>
+    <p>Explore les mystères de l'univers à travers ces planètes thématiques !</p>
+  </header>
+
+  <section class="galaxy-container" aria-label="Carte de l'univers">
+    <button id="planet-fractals" class="planet" onclick="openModal('fractals')">
+      <div class="emoji">🌀</div>
+      <div class="label">Univers Fractals</div>
+    </button>
+
+    <button id="planet-quantique" class="planet" onclick="openModal('quantique')">
+      <div class="emoji">⚛️</div>
+      <div class="label">Monde Quantique</div>
+    </button>
+
+    <button id="planet-cordes" class="planet" onclick="openModal('cordes')">
+      <div class="emoji">🎻</div>
+      <div class="label">Théorie des Cordes</div>
+    </button>
+
+    <button id="planet-simulation" class="planet" onclick="openModal('simulation')">
+      <div class="emoji">🖥️</div>
+      <div class="label">Hypothèse Simulation</div>
+    </button>
+
+    <button id="planet-philo" class="planet" onclick="openModal('philo')">
+      <div class="emoji">♾️</div>
+      <div class="label">Philosophie de l'Infini</div>
+    </button>
+
+    <button id="planet-multivers" class="planet" onclick="openModal('multivers')">
+      <div class="emoji">🌌</div>
+      <div class="label">Multivers</div>
+    </button>
+
+    <button id="planet-infini" class="planet" onclick="openModal('infini')">
+      <div class="emoji">∞</div>
+      <div class="label">Infini Mathématique</div>
+    </button>
+
+    <button id="planet-trousnoirs" class="planet" onclick="openModal('trousnoirs')">
+      <div class="emoji">🕳️</div>
+      <div class="label">Trous Noirs & Singularités</div>
+    </button>
+
+    <button id="planet-matiere-noire" class="planet" onclick="openModal('matiere_noire')">
+      <div class="emoji">🌌</div>
+      <div class="label">Énergie & Matière Noire</div>
+    </button>
+
+    <button id="planet-voyage-temps" class="planet" onclick="openModal('voyage_temps')">
+      <div class="emoji">⏳</div>
+      <div class="label">Voyage Temporel</div>
+    </button>
+  </section>
+
+  <div class="modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button class="close-btn" aria-label="Fermer" onclick="closeModal()">×</button>
+      <h2 id="modal-title"></h2>
+      <img id="modal-image" alt="" />
+      <p id="modal-content"></p>
+
+      <div class="modal-nav">
+        <button id="prev-topic" class="nav-btn">← Précédent</button>
+        <button id="next-topic" class="nav-btn">Suivant →</button>
+      </div>
+
+      <div class="quiz-container" id="quiz-container" aria-live="polite" aria-atomic="true">
+        <div class="quiz-question" id="quiz-question"></div>
+        <ul class="quiz-options" id="quiz-options"></ul>
+        <button class="quiz-btn" id="quiz-submit" disabled>Valider</button>
+        <div class="quiz-result" id="quiz-result" role="alert" aria-live="assertive"></div>
+        <button class="quiz-btn" id="quiz-next-question" style="display:none; margin-top:10px;">Question
+          Suivante</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="space-audio" src="https://archive.org/download/cosmo_202607/Cosmo.mp3" loop></audio>
+
+  <script>
+    // === Base de Données Globale ===
+    const data = {
+      fractals: {
+        title: "Univers Fractals",
+        content: "L'univers fractal révèle une structure auto-similaire à toutes les échelles, où le grand et le petit se reflètent mutuellement, entre cosmos et infinitésimaux.",
+        image: "https://i.ibb.co/RpHkWbpC/Univers-Fractals.png",
+        quiz: [{
+          question: "Que signifie qu'un univers est fractal ?",
+          options: ["Il a une structure répétée à différentes échelles", "Il est fini et limité", "Il est complètement aléatoire", "Il est lisse et homogène"],
+          answer: 0
+        },
+        {
+          question: "Quelle caractéristique principale possède un fractal ?",
+          options: ["Homogénéité", "Auto-similarité", "Linéarité", "Discontinuité"],
+          answer: 1
+        }
+        ]
+      },
+      quantique: {
+        title: "Monde Quantique",
+        content: "Au cœur de la matière, le monde quantique régit les lois étranges des particules subatomiques, défiant nos intuitions classiques.",
+        image: "https://i.ibb.co/3y3JDGLL/Monde-Quantique.png",
+        quiz: [{
+          question: "Quelle particule est souvent appelée 'la brique de base de la matière' ?",
+          options: ["Le proton", "L'électron", "Le quark", "Le neutron"],
+          answer: 2
+        },
+        {
+          question: "Quel principe est central en physique quantique ?",
+          options: ["Principe d'incertitude de Heisenberg", "Gravité universelle", "Théorie de la relativité", "Principe de Pascal"],
+          answer: 0
+        }
+        ]
+      },
+      cordes: {
+        title: "Théorie des Cordes",
+        content: "La théorie des cordes propose que les particules fondamentales sont des vibrations de minuscules cordes, unifiant ainsi la physique quantique et la gravitation.",
+        image: "https://i.ibb.co/FLB7Tgr0/Th-orie-des-cordes.png",
+        quiz: [{
+          question: "Que suggère la théorie des cordes ?",
+          options: ["Les particules sont des points fixes", "Les particules sont des vibrations de cordes", "La gravité n'existe pas", "L'univers est plat"],
+          answer: 1
+        },
+        {
+          question: "Selon la théorie des cordes, combien de dimensions supplémentaires existeraient ?",
+          options: ["1", "3", "6 ou 7", "11"],
+          answer: 2
+        }
+        ]
+      },
+      simulation: {
+        title: "Hypothèse de la Simulation",
+        content: "Cette hypothèse suggère que notre réalité pourrait être une simulation numérique avancée créée par une intelligence supérieure.",
+        image: "https://i.ibb.co/ccqynxS5/Hypoth-se-de-la-Simulation.png",
+        quiz: [{
+          question: "Quel argument est souvent donné en faveur de l'hypothèse de la simulation ?",
+          options: ["La complexité du cerveau humain", "Les limites physiques apparentes de l'univers", "Les bugs observés dans la réalité", "La présence de code informatique dans l'ADN"],
+          answer: 1
+        },
+        {
+          question: "Quel philosophe est célèbre pour avoir popularisé l'idée de simulation ?",
+          options: ["Nick Bostrom", "René Descartes", "Immanuel Kant", "Socrate"],
+          answer: 0
+        }
+        ]
+      },
+      philo: {
+        title: "Philosophie de l'infini",
+        content: "L'infini questionne la conscience humaine : sommes-nous capables de saisir un univers sans limites ?",
+        image: "https://i.ibb.co/Y4PpjWCT/Philosophie-de-l-Infini.png",
+        quiz: [{
+          question: "Quelle notion est souvent associée à la philosophie de l'infini ?",
+          options: ["La finitude", "L'éternité", "La conscience", "La matière"],
+          answer: 1
+        },
+        {
+          question: "Quel philosophe a beaucoup réfléchi à l'infini ?",
+          options: ["Georg Cantor", "Platon", "Aristote", "Emmanuel Levinas"],
+          answer: 2
+        }
+        ]
+      },
+      multivers: {
+        title: "Multivers",
+        content: "Le concept de multivers évoque l'existence possible de multiples univers parallèles avec des lois physiques différentes.",
+        image: "https://i.ibb.co/prsbGmv8/Multivers.png",
+        quiz: [{
+          question: "Que désigne le terme 'multivers' ?",
+          options: ["Un univers unique", "Une multitude d'univers parallèles", "Une galaxie spécifique", "Un trou noir"],
+          answer: 1
+        },
+        {
+          question: "Quelle théorie est souvent liée au multivers ?",
+          options: ["Théorie des cordes", "Théorie des champs", "Théorie de la relativité restreinte", "Physique classique"],
+          answer: 0
+        }
+        ]
+      },
+      infini: {
+        title: "Infini Mathématique",
+        content: "Les mathématiques explorent différentes tailles d'infinis et des paradoxes fascinants liés à l'infinité.",
+        image: "https://i.ibb.co/vxgyHFMW/Infini-Math-matique.png",
+        quiz: [{
+          question: "Qui a fondé la théorie des ensembles et des infinis ?",
+          options: ["Isaac Newton", "Georg Cantor", "Carl Gauss", "Leonhard Euler"],
+          answer: 1
+        },
+        {
+          question: "Que représente l'infini mathématique ?",
+          options: ["Un nombre fini très grand", "Une quantité sans limite", "Une valeur négative", "Un point précis"],
+          answer: 1
+        }
+        ]
+      },
+      trousnoirs: {
+        title: "Trous Noirs & Singularités",
+        content: "Objets célestes d'une densité extrême, les trous noirs déforment l'espace-temps au point que même la lumière ne peut s'en échapper. Au centre se trouve une singularité, et l'horizon des événements soulève le fameux paradoxe de l'information de Hawking.",
+        image: "https://i.ibb.co/pBg8twNS/Trous-Noirs-Singularit-s.png",
+        quiz: [{
+          question: "Comment appelle-t-on la frontière d'un trou noir d'où rien ne peut s'échapper ?",
+          options: ["Le point de non-retour", "L'horizon des événements", "La zone de singularité", "Le disque d'accrétion"],
+          answer: 1
+        },
+        {
+          question: "Quel physicien a démontré que les trous noirs pouvaient s'évaporer ?",
+          options: ["Albert Einstein", "Stephen Hawking", "Niels Bohr", "Isaac Newton"],
+          answer: 1
+        }
+        ]
+      },
+      matiere_noire: {
+        title: "Énergie & Matière Noire",
+        content: "Bien qu'invisibles, la matière noire et l'énergie noire composent environ 95% de l'univers. La matière noire agit comme une colle gravitationnelle maintenant les galaxies, tandis que l'énergie noire accélère l'expansion de l'univers.",
+        image: "https://i.ibb.co/dJbwYMmr/nergie-Mati-re-Noire.png",
+        quiz: [{
+          question: "Quel pourcentage approximatif de l'univers l'ensemble matière noire + énergie noire représente-t-il ?",
+          options: ["5%", "25%", "70%", "95%"],
+          answer: 3
+        },
+        {
+          question: "Quel est l'effet principal attribué à l'Énergie Noire ?",
+          options: ["Ralentir la lumière", "Accélérer l'expansion de l'univers", "Créer des minis trous noirs", "Attirer les galaxies entre elles"],
+          answer: 1
+        }
+        ]
+      },
+      voyage_temps: {
+        title: "Paradoxe du Voyage Temporel",
+        content: "En utilisant la théorie de la Relativité d'Einstein, la physique étudie la possibilité théorique de boucles temporelles (courbes de genre espace fermées). Cependant, cela soulève d'immenses casse-têtes logiques comme le paradoxe du grand-père.",
+        image: "https://i.ibb.co/SwPc00H2/Paradoxe-Voyage-Temporel.png",
+        quiz: [{
+          question: "Qu'illustre le célèbre 'paradoxe du grand-père' ?",
+          options: ["Une impossibilité biologique", "Une rupture de la causalité logique liée au passé", "Une accélération du temps futur", "Le vieillissement des jumeaux"],
+          answer: 1
+        },
+        {
+          question: "Quelle théorie d'Einstein permet d'envisager scientifiquement les déformations du temps ?",
+          options: ["La mécanique quantique", "La relativité", "La thermodynamique", "La théorie des cordes"],
+          answer: 1
+        }
+        ]
+      }
+    };
+    const topics = Object.keys(data);
+    let currentTopicIndex = 0;
+    let currentQuizIndex = 0;
+    let selectedOption = null;
+    let score = 0;
+    const completedPlanets = new Set();
+    // DOM references
+    const modal = document.getElementById('info-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalContent = document.getElementById('modal-content');
+    const modalImage = document.getElementById('modal-image');
+    const prevBtn = document.getElementById('prev-topic');
+    const nextBtn = document.getElementById('next-topic');
+    const scoreBoardEl = document.getElementById('global-score');
+    // Quiz DOM
+    const quizContainer = document.getElementById('quiz-container');
+    const quizQuestionEl = document.getElementById('quiz-question');
+    const quizOptionsEl = document.getElementById('quiz-options');
+    const quizSubmitBtn = document.getElementById('quiz-submit');
+    const quizResultEl = document.getElementById('quiz-result');
+    const quizNextQuestionBtn = document.getElementById('quiz-next-question');
+
+    function openModal(topicKey) {
+      currentTopicIndex = topics.indexOf(topicKey);
+      currentQuizIndex = 0;
+      selectedOption = null;
+      loadTopic();
+      modal.classList.add('active');
+    }
+
+    function loadTopic() {
+      const currentKey = topics[currentTopicIndex];
+      const topic = data[currentKey];
+      modalTitle.textContent = topic.title;
+      modalContent.textContent = topic.content;
+      modalImage.src = topic.image;
+      modalImage.alt = `Image illustrant ${topic.title}`;
+      prevBtn.disabled = currentTopicIndex === 0;
+      nextBtn.disabled = currentTopicIndex === topics.length - 1;
+      if (completedPlanets.has(currentKey)) {
+        displayQuizFinished();
+      } else {
+        loadQuizQuestion();
+      }
+    }
+
+    function loadQuizQuestion() {
+      const topic = data[topics[currentTopicIndex]];
+      quizQuestionEl.style.color = "";
+      quizQuestionEl.textContent = topic.quiz[currentQuizIndex].question;
+      quizOptionsEl.innerHTML = "";
+      selectedOption = null;
+      quizSubmitBtn.disabled = true;
+      quizSubmitBtn.style.display = "inline-block";
+      quizNextQuestionBtn.style.display = "none";
+      quizResultEl.textContent = "";
+      topic.quiz[currentQuizIndex].options.forEach((opt, idx) => {
+        const li = document.createElement('li');
+        const id = `option-${idx}`;
+        li.innerHTML = `
+        <input type="radio" id="${id}" name="quiz-option" value="${idx}" />
+        <label for="${id}">${opt}</label>
+      `;
+        quizOptionsEl.appendChild(li);
+      });
+      quizOptionsEl.querySelectorAll('input[name="quiz-option"]').forEach(input => {
+        input.addEventListener('change', () => {
+          selectedOption = parseInt(input.value);
+          quizSubmitBtn.disabled = false;
+        });
+      });
+    }
+    quizSubmitBtn.addEventListener('click', () => {
+      const topic = data[topics[currentTopicIndex]];
+      const questionObj = topic.quiz[currentQuizIndex];
+      if (selectedOption === questionObj.answer) {
+        quizResultEl.textContent = "✔️ Bonne réponse !";
+        quizResultEl.style.color = "#00ffcc";
+        score += 10;
+        scoreBoardEl.textContent = score;
+      } else {
+        quizResultEl.textContent = `❌ Mauvaise réponse. La bonne réponse était : "${questionObj.options[questionObj.answer]}".`;
+        quizResultEl.style.color = "#ff6666";
+      }
+      quizSubmitBtn.style.display = "none";
+      quizNextQuestionBtn.style.display = "inline-block";
+    });
+    quizNextQuestionBtn.addEventListener('click', () => {
+      currentQuizIndex++;
+      const currentKey = topics[currentTopicIndex];
+      const topic = data[currentKey];
+      if (currentQuizIndex >= topic.quiz.length) {
+        completedPlanets.add(currentKey);
+        const targetPlanet = document.getElementById(`planet-${currentKey}`);
+        if (targetPlanet) targetPlanet.classList.add('completed');
+        displayQuizFinished();
+      } else {
+        loadQuizQuestion();
+      }
+    });
+
+    function displayQuizFinished() {
+      quizQuestionEl.textContent = "🎉 Vous avez terminé le quiz de cette planète !";
+      quizQuestionEl.style.color = "#ffd700";
+      quizOptionsEl.innerHTML = "";
+      quizResultEl.textContent = "";
+      quizNextQuestionBtn.style.display = "none";
+      quizSubmitBtn.style.display = "none";
+    }
+    prevBtn.addEventListener('click', () => {
+      if (currentTopicIndex > 0) {
+        currentTopicIndex--;
+        currentQuizIndex = 0;
+        loadTopic();
+      }
+    });
+    nextBtn.addEventListener('click', () => {
+      if (currentTopicIndex < topics.length - 1) {
+        currentTopicIndex++;
+        currentQuizIndex = 0;
+        loadTopic();
+      }
+    });
+
+    function closeModal() {
+      modal.classList.remove('active');
+    }
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+    // Gestion son
+    const spaceAudio = document.getElementById('space-audio');
+    let isPlaying = false;
+
+    function toggleSound() {
+      if (isPlaying) {
+        spaceAudio.pause();
+        isPlaying = false;
+        document.querySelector('.sound-toggle').textContent = "🔇 Son";
+      } else {
+        spaceAudio.play();
+        isPlaying = true;
+        document.querySelector('.sound-toggle').textContent = "🔊 Son";
+      }
+    }
+    // === Effet étoiles en fond ===
+    const canvas = document.createElement('canvas');
+    canvas.id = 'stars-canvas';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    const starsCount = 150;
+    const stars = [];
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5;
+        this.speed = 0.02 + Math.random() * 0.03;
+        this.opacity = Math.random();
+      }
+      update() {
+        this.x -= this.speed;
+        if (this.x < 0) this.x = width;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < starsCount; i++) stars.push(new Star());
+
+    function animateStars() {
+      ctx.clearRect(0, 0, width, height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+  </script>
+
+  <style>
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  </style>
+
+</body>
+
+</html>
