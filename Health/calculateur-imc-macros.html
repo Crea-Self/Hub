@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculateur IMC et macronutriments</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --card: #ffffff;
+    --border: #e2e0d8;
+    --text-primary: #262624;
+    --text-secondary: #6b6a65;
+    --accent-bg: #e6f1fb;
+    --accent-text: #0c447c;
+    --warning-bg: #faeeda;
+    --warning-text: #633806;
+    --success-bg: #eaf3de;
+    --success-text: #27500a;
+    --danger-text: #791f1f;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  .wrap {
+    max-width: 480px;
+    width: 100%;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 1.5rem;
+    text-align: center;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+  label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 4px;
+  }
+  select, input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: 14px;
+    background: var(--card);
+    color: var(--text-primary);
+  }
+  select:focus, input:focus {
+    outline: none;
+    border-color: #999;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .card p.label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 4px;
+  }
+  .card p.value {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .card p.cat {
+    font-size: 13px;
+    margin: 4px 0 0;
+    font-weight: 500;
+  }
+  .macros {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .macro {
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .macro p.label {
+    font-size: 13px;
+    margin: 0 0 4px;
+    font-weight: 500;
+  }
+  .macro p.value {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .macro.prot { background: var(--accent-bg); }
+  .macro.prot p { color: var(--accent-text); }
+  .macro.gluc { background: var(--warning-bg); }
+  .macro.gluc p { color: var(--warning-text); }
+  .macro.lip { background: var(--success-bg); }
+  .macro.lip p { color: var(--success-text); }
+  .footnote {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 1.5rem;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Calculateur d'IMC et de macronutriments</h1>
+
+  <div class="grid2">
+    <div>
+      <label for="sexe">Sexe</label>
+      <select id="sexe">
+        <option value="h">Homme</option>
+        <option value="f">Femme</option>
+      </select>
+    </div>
+    <div>
+      <label for="age">Âge</label>
+      <input type="number" id="age" value="30" min="15" max="90" />
+    </div>
+    <div>
+      <label for="poids">Poids (kg)</label>
+      <input type="number" id="poids" value="70" min="30" max="250" />
+    </div>
+    <div>
+      <label for="taille">Taille (cm)</label>
+      <input type="number" id="taille" value="175" min="120" max="230" />
+    </div>
+    <div>
+      <label for="activite">Activité</label>
+      <select id="activite">
+        <option value="1.2">Sédentaire</option>
+        <option value="1.375">Légère (1-3x/sem)</option>
+        <option value="1.55" selected>Modérée (3-5x/sem)</option>
+        <option value="1.725">Intense (6-7x/sem)</option>
+        <option value="1.9">Très intense</option>
+      </select>
+    </div>
+    <div>
+      <label for="objectif">Objectif</label>
+      <select id="objectif">
+        <option value="-500">Perte de poids</option>
+        <option value="0" selected>Maintien</option>
+        <option value="300">Prise de muscle</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <p class="label">IMC</p>
+      <p class="value" id="imc-val">--</p>
+      <p class="cat" id="imc-cat">--</p>
+    </div>
+    <div class="card">
+      <p class="label">Calories/jour</p>
+      <p class="value" id="cal-val">--</p>
+    </div>
+  </div>
+
+  <div class="macros">
+    <div class="macro prot">
+      <p class="label">Protéines</p>
+      <p class="value" id="prot-val">--</p>
+    </div>
+    <div class="macro gluc">
+      <p class="label">Glucides</p>
+      <p class="value" id="gluc-val">--</p>
+    </div>
+    <div class="macro lip">
+      <p class="label">Lipides</p>
+      <p class="value" id="lip-val">--</p>
+    </div>
+  </div>
+
+  <p class="footnote">
+    Calories estimées via l'équation de Mifflin-St Jeor.
+    Protéines : 2 g/kg — Lipides : 0,9 g/kg — Glucides : reste des calories.
+    Ces valeurs sont indicatives ; consulte un professionnel de santé pour un suivi personnalisé.
+  </p>
+</div>
+
+<script>
+function calc(){
+  const sexe = document.getElementById('sexe').value;
+  const age = parseFloat(document.getElementById('age').value);
+  const poids = parseFloat(document.getElementById('poids').value);
+  const taille = parseFloat(document.getElementById('taille').value);
+  const activite = parseFloat(document.getElementById('activite').value);
+  const objectif = parseFloat(document.getElementById('objectif').value);
+
+  if(!poids || !taille || !age) return;
+
+  const tailleM = taille / 100;
+  const imc = poids / (tailleM * tailleM);
+  document.getElementById('imc-val').textContent = imc.toFixed(1);
+
+  let cat, catColor;
+  if(imc < 18.5){ cat = 'Insuffisance pondérale'; catColor = 'var(--warning-text)'; }
+  else if(imc < 25){ cat = 'Corpulence normale'; catColor = 'var(--success-text)'; }
+  else if(imc < 30){ cat = 'Surpoids'; catColor = 'var(--warning-text)'; }
+  else { cat = 'Obésité'; catColor = 'var(--danger-text)'; }
+  const catEl = document.getElementById('imc-cat');
+  catEl.textContent = cat;
+  catEl.style.color = catColor;
+
+  let mb;
+  if(sexe === 'h'){
+    mb = 10*poids + 6.25*taille - 5*age + 5;
+  } else {
+    mb = 10*poids + 6.25*taille - 5*age - 161;
+  }
+  const maintenance = mb * activite;
+  const calories = Math.round(maintenance + objectif);
+  document.getElementById('cal-val').textContent = calories.toLocaleString('fr-FR') + ' kcal';
+
+  const protG = Math.round(poids * 2);
+  const lipG = Math.round(poids * 0.9);
+  const protKcal = protG * 4;
+  const lipKcal = lipG * 9;
+  const glucKcal = Math.max(calories - protKcal - lipKcal, 0);
+  const glucG = Math.round(glucKcal / 4);
+
+  document.getElementById('prot-val').textContent = protG + ' g';
+  document.getElementById('gluc-val').textContent = glucG + ' g';
+  document.getElementById('lip-val').textContent = lipG + ' g';
+}
+
+['sexe','age','poids','taille','activite','objectif'].forEach(id => {
+  document.getElementById(id).addEventListener('input', calc);
+  document.getElementById(id).addEventListener('change', calc);
+});
+calc();
+</script>
+</body>
+</html>
