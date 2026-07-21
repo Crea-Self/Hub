@@ -23,7 +23,6 @@
       position: relative;
     }
 
-    /* === Canvas étoiles (fond dynamique) === */
     #stars-canvas {
       position: fixed;
       top: 0;
@@ -35,7 +34,6 @@
       background: transparent;
     }
 
-    /* === Éléments UI Fixes === */
     .sound-toggle {
       position: fixed;
       top: 1rem;
@@ -72,7 +70,6 @@
       box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
     }
 
-    /* === Header === */
     header {
       text-align: center;
       padding: 2rem 1rem 1rem;
@@ -94,7 +91,7 @@
       margin-top: 0;
     }
 
-    /* === Conteneur galaxie === */
+    /* === Conteneur galaxie (desktop = orbites en position absolue) === */
     .galaxy-container {
       position: relative;
       width: 90vw;
@@ -105,7 +102,6 @@
       z-index: 10;
     }
 
-    /* === Planètes (thèmes) === */
     .planet {
       position: absolute;
       width: 125px;
@@ -156,7 +152,6 @@
       max-width: 100%;
     }
 
-    /* === Modal === */
     .modal {
       display: none;
       position: fixed;
@@ -197,6 +192,8 @@
       border-radius: 10px;
       margin-bottom: 1rem;
       user-select: none;
+      background: #0f2740;
+      min-height: 80px;
     }
 
     .modal-content h2 {
@@ -227,7 +224,6 @@
       color: #ff1f1f;
     }
 
-    /* === Navigation dans modal === */
     .modal-nav {
       margin-top: 1rem;
       display: flex;
@@ -257,7 +253,6 @@
       background: #00b8ff;
     }
 
-    /* === Quiz === */
     .quiz-container {
       margin-top: 2rem;
       text-align: left;
@@ -315,7 +310,6 @@
       user-select: text;
     }
 
-    /* === Animations === */
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -350,55 +344,7 @@
       }
     }
 
-    /* === Responsive === */
-    @media (max-width: 800px) {
-      .galaxy-container {
-        height: 500px;
-      }
-
-      .planet {
-        width: 105px;
-        height: 105px;
-      }
-
-      .planet .emoji {
-        font-size: 1.6rem;
-      }
-
-      .planet .label {
-        font-size: 0.75rem;
-      }
-
-      header h1 {
-        font-size: 2rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .galaxy-container {
-        height: 450px;
-        width: 95vw;
-      }
-
-      .planet {
-        width: 90px;
-        height: 90px;
-      }
-
-      .planet .emoji {
-        font-size: 1.4rem;
-      }
-
-      .planet .label {
-        font-size: 0.7rem;
-      }
-
-      header h1 {
-        font-size: 1.6rem;
-      }
-    }
-
-    /* === Positions carte globale === */
+    /* === Positions carte globale (DESKTOP UNIQUEMENT) === */
     #planet-fractals {
       top: 8%;
       left: 6%;
@@ -457,6 +403,83 @@
       top: 72%;
       left: 58%;
       animation-duration: 21s;
+    }
+
+    /* ============================================================
+       RESPONSIVE MOBILE
+       On abandonne le positionnement absolu "en orbite" (top/left
+       en %) qui NE PEUT PAS bien s'adapter à un petit écran, quelle
+       que soit la taille des planètes. Sous 800px on bascule en
+       CSS Grid : les règles #planet-xxx (top/left) ci-dessus sont
+       neutralisées par position: static !important ci-dessous.
+       ============================================================ */
+    @media (max-width: 800px) {
+      .galaxy-container {
+        height: auto;
+        width: 92vw;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        justify-items: center;
+        margin: 1.5rem auto 2rem;
+      }
+
+      .planet {
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        animation: none !important;
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+        aspect-ratio: 1 / 1;
+      }
+
+      .planet .emoji {
+        font-size: 1.6rem;
+      }
+
+      .planet .label {
+        font-size: 0.75rem;
+      }
+
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .modal-content {
+        padding: 1.5rem 1.2rem 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .galaxy-container {
+        width: 95vw;
+        gap: 0.7rem;
+      }
+
+      .planet {
+        max-width: 130px;
+      }
+
+      .planet .emoji {
+        font-size: 1.4rem;
+      }
+
+      .planet .label {
+        font-size: 0.68rem;
+      }
+
+      header h1 {
+        font-size: 1.6rem;
+      }
+
+      .score-board,
+      .sound-toggle {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.7rem;
+      }
     }
   </style>
 </head>
@@ -549,167 +572,76 @@
   <audio id="space-audio" src="../Sound/Cosmo.mp3" loop></audio>
 
   <script>
-    // === Base de Données Globale ===
     const data = {
       fractals: {
         title: "Univers Fractals",
         content: "L'univers fractal révèle une structure auto-similaire à toutes les échelles, où le grand et le petit se reflètent mutuellement, entre cosmos et infinitésimaux.",
         image: "../Pics/Cosmo/Univers-Fractals.png",
-        quiz: [{
-          question: "Que signifie qu'un univers est fractal ?",
-          options: ["Il a une structure répétée à différentes échelles", "Il est fini et limité", "Il est complètement aléatoire", "Il est lisse et homogène"],
-          answer: 0
-        },
-        {
-          question: "Quelle caractéristique principale possède un fractal ?",
-          options: ["Homogénéité", "Auto-similarité", "Linéarité", "Discontinuité"],
-          answer: 1
-        }
-        ]
+        quiz: [{ question: "Que signifie qu'un univers est fractal ?", options: ["Il a une structure répétée à différentes échelles", "Il est fini et limité", "Il est complètement aléatoire", "Il est lisse et homogène"], answer: 0 },
+        { question: "Quelle caractéristique principale possède un fractal ?", options: ["Homogénéité", "Auto-similarité", "Linéarité", "Discontinuité"], answer: 1 }]
       },
       quantique: {
         title: "Monde Quantique",
         content: "Au cœur de la matière, le monde quantique régit les lois étranges des particules subatomiques, défiant nos intuitions classiques.",
         image: "../Pics/Cosmo/Monde-Quantique.png",
-        quiz: [{
-          question: "Quelle particule est souvent appelée 'la brique de base de la matière' ?",
-          options: ["Le proton", "L'électron", "Le quark", "Le neutron"],
-          answer: 2
-        },
-        {
-          question: "Quel principe est central en physique quantique ?",
-          options: ["Principe d'incertitude de Heisenberg", "Gravité universelle", "Théorie de la relativité", "Principe de Pascal"],
-          answer: 0
-        }
-        ]
+        quiz: [{ question: "Quelle particule est souvent appelée 'la brique de base de la matière' ?", options: ["Le proton", "L'électron", "Le quark", "Le neutron"], answer: 2 },
+        { question: "Quel principe est central en physique quantique ?", options: ["Principe d'incertitude de Heisenberg", "Gravité universelle", "Théorie de la relativité", "Principe de Pascal"], answer: 0 }]
       },
       cordes: {
         title: "Théorie des Cordes",
         content: "La théorie des cordes propose que les particules fondamentales sont des vibrations de minuscules cordes, unifiant ainsi la physique quantique et la gravitation.",
         image: "../Pics/Cosmo/Th-orie-des-cordes.png",
-        quiz: [{
-          question: "Que suggère la théorie des cordes ?",
-          options: ["Les particules sont des points fixes", "Les particules sont des vibrations de cordes", "La gravité n'existe pas", "L'univers est plat"],
-          answer: 1
-        },
-        {
-          question: "Selon la théorie des cordes, combien de dimensions supplémentaires existeraient ?",
-          options: ["1", "3", "6 ou 7", "11"],
-          answer: 2
-        }
-        ]
+        quiz: [{ question: "Que suggère la théorie des cordes ?", options: ["Les particules sont des points fixes", "Les particules sont des vibrations de cordes", "La gravité n'existe pas", "L'univers est plat"], answer: 1 },
+        { question: "Selon la théorie des cordes, combien de dimensions supplémentaires existeraient ?", options: ["1", "3", "6 ou 7", "11"], answer: 2 }]
       },
       simulation: {
         title: "Hypothèse de la Simulation",
         content: "Cette hypothèse suggère que notre réalité pourrait être une simulation numérique avancée créée par une intelligence supérieure.",
         image: "../Pics/Cosmo/Hypoth-se-de-la-Simulation.png",
-        quiz: [{
-          question: "Quel argument est souvent donné en faveur de l'hypothèse de la simulation ?",
-          options: ["La complexité du cerveau humain", "Les limites physiques apparentes de l'univers", "Les bugs observés dans la réalité", "La présence de code informatique dans l'ADN"],
-          answer: 1
-        },
-        {
-          question: "Quel philosophe est célèbre pour avoir popularisé l'idée de simulation ?",
-          options: ["Nick Bostrom", "René Descartes", "Immanuel Kant", "Socrate"],
-          answer: 0
-        }
-        ]
+        quiz: [{ question: "Quel argument est souvent donné en faveur de l'hypothèse de la simulation ?", options: ["La complexité du cerveau humain", "Les limites physiques apparentes de l'univers", "Les bugs observés dans la réalité", "La présence de code informatique dans l'ADN"], answer: 1 },
+        { question: "Quel philosophe est célèbre pour avoir popularisé l'idée de simulation ?", options: ["Nick Bostrom", "René Descartes", "Immanuel Kant", "Socrate"], answer: 0 }]
       },
       philo: {
         title: "Philosophie de l'infini",
         content: "L'infini questionne la conscience humaine : sommes-nous capables de saisir un univers sans limites ?",
         image: "../Pics/Cosmo/Philosophie-de-l-Infini.png",
-        quiz: [{
-          question: "Quelle notion est souvent associée à la philosophie de l'infini ?",
-          options: ["La finitude", "L'éternité", "La conscience", "La matière"],
-          answer: 1
-        },
-        {
-          question: "Quel philosophe a beaucoup réfléchi à l'infini ?",
-          options: ["Georg Cantor", "Platon", "Aristote", "Emmanuel Levinas"],
-          answer: 2
-        }
-        ]
+        quiz: [{ question: "Quelle notion est souvent associée à la philosophie de l'infini ?", options: ["La finitude", "L'éternité", "La conscience", "La matière"], answer: 1 },
+        { question: "Quel philosophe a beaucoup réfléchi à l'infini ?", options: ["Georg Cantor", "Platon", "Aristote", "Emmanuel Levinas"], answer: 2 }]
       },
       multivers: {
         title: "Multivers",
         content: "Le concept de multivers évoque l'existence possible de multiples univers parallèles avec des lois physiques différentes.",
         image: "../Pics/Cosmo/Multivers.png",
-        quiz: [{
-          question: "Que désigne le terme 'multivers' ?",
-          options: ["Un univers unique", "Une multitude d'univers parallèles", "Une galaxie spécifique", "Un trou noir"],
-          answer: 1
-        },
-        {
-          question: "Quelle théorie est souvent liée au multivers ?",
-          options: ["Théorie des cordes", "Théorie des champs", "Théorie de la relativité restreinte", "Physique classique"],
-          answer: 0
-        }
-        ]
+        quiz: [{ question: "Que désigne le terme 'multivers' ?", options: ["Un univers unique", "Une multitude d'univers parallèles", "Une galaxie spécifique", "Un trou noir"], answer: 1 },
+        { question: "Quelle théorie est souvent liée au multivers ?", options: ["Théorie des cordes", "Théorie des champs", "Théorie de la relativité restreinte", "Physique classique"], answer: 0 }]
       },
       infini: {
         title: "Infini Mathématique",
         content: "Les mathématiques explorent différentes tailles d'infinis et des paradoxes fascinants liés à l'infinité.",
         image: "../Pics/Cosmo/Infini-Math-matique.png",
-        quiz: [{
-          question: "Qui a fondé la théorie des ensembles et des infinis ?",
-          options: ["Isaac Newton", "Georg Cantor", "Carl Gauss", "Leonhard Euler"],
-          answer: 1
-        },
-        {
-          question: "Que représente l'infini mathématique ?",
-          options: ["Un nombre fini très grand", "Une quantité sans limite", "Une valeur négative", "Un point précis"],
-          answer: 1
-        }
-        ]
+        quiz: [{ question: "Qui a fondé la théorie des ensembles et des infinis ?", options: ["Isaac Newton", "Georg Cantor", "Carl Gauss", "Leonhard Euler"], answer: 1 },
+        { question: "Que représente l'infini mathématique ?", options: ["Un nombre fini très grand", "Une quantité sans limite", "Une valeur négative", "Un point précis"], answer: 1 }]
       },
       trousnoirs: {
         title: "Trous Noirs & Singularités",
         content: "Objets célestes d'une densité extrême, les trous noirs déforment l'espace-temps au point que même la lumière ne peut s'en échapper. Au centre se trouve une singularité, et l'horizon des événements soulève le fameux paradoxe de l'information de Hawking.",
         image: "../Pics/Cosmo/Trous-Noirs-Singularit-s.png",
-        quiz: [{
-          question: "Comment appelle-t-on la frontière d'un trou noir d'où rien ne peut s'échapper ?",
-          options: ["Le point de non-retour", "L'horizon des événements", "La zone de singularité", "Le disque d'accrétion"],
-          answer: 1
-        },
-        {
-          question: "Quel physicien a démontré que les trous noirs pouvaient s'évaporer ?",
-          options: ["Albert Einstein", "Stephen Hawking", "Niels Bohr", "Isaac Newton"],
-          answer: 1
-        }
-        ]
+        quiz: [{ question: "Comment appelle-t-on la frontière d'un trou noir d'où rien ne peut s'échapper ?", options: ["Le point de non-retour", "L'horizon des événements", "La zone de singularité", "Le disque d'accrétion"], answer: 1 },
+        { question: "Quel physicien a démontré que les trous noirs pouvaient s'évaporer ?", options: ["Albert Einstein", "Stephen Hawking", "Niels Bohr", "Isaac Newton"], answer: 1 }]
       },
       matiere_noire: {
         title: "Énergie & Matière Noire",
         content: "Bien qu'invisibles, la matière noire et l'énergie noire composent environ 95% de l'univers. La matière noire agit comme une colle gravitationnelle maintenant les galaxies, tandis que l'énergie noire accélère l'expansion de l'univers.",
-        image: "../Pics/Cosmo/nergie-Mati-re-Noire.png",
-        quiz: [{
-          question: "Quel pourcentage approximatif de l'univers l'ensemble matière noire + énergie noire représente-t-il ?",
-          options: ["5%", "25%", "70%", "95%"],
-          answer: 3
-        },
-        {
-          question: "Quel est l'effet principal attribué à l'Énergie Noire ?",
-          options: ["Ralentir la lumière", "Accélérer l'expansion de l'univers", "Créer des minis trous noirs", "Attirer les galaxies entre elles"],
-          answer: 1
-        }
-        ]
+        image: "../Pics/Cosmo/Energie-Mati-re-Noire.png",
+        quiz: [{ question: "Quel pourcentage approximatif de l'univers l'ensemble matière noire + énergie noire représente-t-il ?", options: ["5%", "25%", "70%", "95%"], answer: 3 },
+        { question: "Quel est l'effet principal attribué à l'Énergie Noire ?", options: ["Ralentir la lumière", "Accélérer l'expansion de l'univers", "Créer des minis trous noirs", "Attirer les galaxies entre elles"], answer: 1 }]
       },
       voyage_temps: {
         title: "Paradoxe du Voyage Temporel",
         content: "En utilisant la théorie de la Relativité d'Einstein, la physique étudie la possibilité théorique de boucles temporelles (courbes de genre espace fermées). Cependant, cela soulève d'immenses casse-têtes logiques comme le paradoxe du grand-père.",
         image: "../Pics/Cosmo/Paradoxe-Voyage-Temporel.png",
-        quiz: [{
-          question: "Qu'illustre le célèbre 'paradoxe du grand-père' ?",
-          options: ["Une impossibilité biologique", "Une rupture de la causalité logique liée au passé", "Une accélération du temps futur", "Le vieillissement des jumeaux"],
-          answer: 1
-        },
-        {
-          question: "Quelle théorie d'Einstein permet d'envisager scientifiquement les déformations du temps ?",
-          options: ["La mécanique quantique", "La relativité", "La thermodynamique", "La théorie des cordes"],
-          answer: 1
-        }
-        ]
+        quiz: [{ question: "Qu'illustre le célèbre 'paradoxe du grand-père' ?", options: ["Une impossibilité biologique", "Une rupture de la causalité logique liée au passé", "Une accélération du temps futur", "Le vieillissement des jumeaux"], answer: 1 },
+        { question: "Quelle théorie d'Einstein permet d'envisager scientifiquement les déformations du temps ?", options: ["La mécanique quantique", "La relativité", "La thermodynamique", "La théorie des cordes"], answer: 1 }]
       }
     };
     const topics = Object.keys(data);
@@ -718,7 +650,6 @@
     let selectedOption = null;
     let score = 0;
     const completedPlanets = new Set();
-    // DOM references
     const modal = document.getElementById('info-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalContent = document.getElementById('modal-content');
@@ -726,13 +657,16 @@
     const prevBtn = document.getElementById('prev-topic');
     const nextBtn = document.getElementById('next-topic');
     const scoreBoardEl = document.getElementById('global-score');
-    // Quiz DOM
     const quizContainer = document.getElementById('quiz-container');
     const quizQuestionEl = document.getElementById('quiz-question');
     const quizOptionsEl = document.getElementById('quiz-options');
     const quizSubmitBtn = document.getElementById('quiz-submit');
     const quizResultEl = document.getElementById('quiz-result');
     const quizNextQuestionBtn = document.getElementById('quiz-next-question');
+
+    modalImage.addEventListener('error', () => {
+      console.error('Image introuvable :', modalImage.src);
+    });
 
     function openModal(topicKey) {
       currentTopicIndex = topics.indexOf(topicKey);
@@ -845,7 +779,6 @@
     window.addEventListener('keydown', (e) => {
       if (e.key === "Escape") closeModal();
     });
-    // Gestion son
     const spaceAudio = document.getElementById('space-audio');
     let isPlaying = false;
 
@@ -855,12 +788,11 @@
         isPlaying = false;
         document.querySelector('.sound-toggle').textContent = "🔇 Son";
       } else {
-        spaceAudio.play();
+        spaceAudio.play().catch(err => console.warn("Lecture audio bloquée :", err));
         isPlaying = true;
         document.querySelector('.sound-toggle').textContent = "🔊 Son";
       }
     }
-    // === Effet étoiles en fond ===
     const canvas = document.createElement('canvas');
     canvas.id = 'stars-canvas';
     document.body.appendChild(canvas);
